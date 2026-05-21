@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -155,7 +156,14 @@ fun SecurityScreen() {
         Spacer(Modifier.height(8.dp))
         Text("Base IPv5: ${ipv5}", fontFamily = fontFamily)
         Spacer(Modifier.height(16.dp))
-        Button(onClick = { entangled = IPv5Utilities.entangleMac(ipv5, mac) }) {
+        Button(onClick = { 
+            val mathResult = IPv5Utilities.evaluateSimpleMath(mac)
+            if (mathResult != null) {
+                entangled = "00:00:00:00:00:" + mathResult.toString(16).uppercase().padStart(2, '0')
+            } else {
+                entangled = IPv5Utilities.entangleMac(ipv5, mac) 
+            }
+        }) {
             Text("Entangle Security", fontFamily = fontFamily)
         }
         if (entangled.isNotEmpty()) {
@@ -193,6 +201,7 @@ fun PredictorScreen() {
 fun PingScreen() {
     var host by remember { mutableStateOf("127.0.0.1") }
     var results = remember { mutableStateListOf<String>() }
+    var realLatencies = remember { mutableStateListOf<Long?>() }
     var pinging by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val isIpv7 = GlobalAppState.ipv7Mode.value
@@ -205,11 +214,19 @@ fun PingScreen() {
         Button(onClick = {
             scope.launch {
                 pinging = true
+                results.clear()
+                realLatencies.clear()
                 results.add(0, "Pinging $host via Boomerang Route...")
                 repeat(4) {
-                    delay(if(isIpv7) 100 else 1000) // FASTER in IPv7 mode
-                    val latency = IPv5Utilities.getBoomerangLatency()
-                    results.add(0, "Reply from $host: bytes=40 time=${latency}ms TTL=1")
+                    val realLatency = pingHost(host)
+                    delay(if(isIpv7) 100 else 1000)
+                    if (realLatency != null) {
+                        results.add(0, "Reply from $host: bytes=40 time=${realLatency * 10000}ms TTL=1")
+                        realLatencies.add(0, realLatency)
+                    } else {
+                        results.add(0, "Request timed out: The Moon is currently blocked by a cloud.")
+                        realLatencies.add(0, null)
+                    }
                 }
                 pinging = false
             }
@@ -219,8 +236,19 @@ fun PingScreen() {
         
         Spacer(Modifier.height(16.dp))
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(results) { res ->
-                Text(res, style = MaterialTheme.typography.overline, fontFamily = fontFamily, fontSize = if(isIpv7) 14.sp else 10.sp)
+            itemsIndexed(results) { index, res ->
+                Column {
+                    Text(res, style = MaterialTheme.typography.overline, fontFamily = fontFamily, fontSize = if(isIpv7) 14.sp else 10.sp)
+                    val real = realLatencies.getOrNull(index)
+                    if (real != null) {
+                        Text(
+                            "Actual latency: ${real}ms (Highlight to reveal secrets)", 
+                            color = Color.Transparent, 
+                            fontSize = 8.sp,
+                            fontFamily = fontFamily
+                        )
+                    }
+                }
             }
         }
     }
@@ -242,12 +270,21 @@ fun DnsScreen() {
             scope.launch {
                 resolving = true
                 logs.clear()
+                val realIp = resolveDns(url)
                 val steps = listOf("Contacting root servers...", "Reticulating splines...", "Consulting the Oracle...", "Waiting for carrier pigeon...", "IPv5 found!")
                 for (step in steps) {
                     logs.add(step)
-                    delay(if(isIpv7) Random.nextLong(10, 100) else Random.nextLong(1000, 3000)) // FASTER in IPv7 mode
+                    delay(if(isIpv7) Random.nextLong(10, 100) else Random.nextLong(1000, 3000))
                 }
-                logs.add("Resolved to: ${IPv5Address.random()}")
+                
+                if (realIp != null) {
+                    val antiIp = realIp.split(".").reversed().joinToString(".")
+                    val hexMac = realIp.split(".").map { it.toIntOrNull()?.toString(16)?.uppercase()?.padStart(2, '0') ?: "00" }.joinToString(":")
+                    logs.add("Resolved Anti-IP: $antiIp")
+                    logs.add("Discovered MAC Address: $hexMac")
+                } else {
+                    logs.add("Resolution failed: Carrier pigeon lost at sea.")
+                }
                 resolving = false
             }
         }, enabled = !resolving) {

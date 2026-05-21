@@ -32,4 +32,25 @@ object IPv5Utilities {
     fun getBoomerangLatency(): Long {
         return Random.nextLong(1500, 5000) // 1.5s to 5s for localhost
     }
+
+    /**
+     * Evaluates a simple math expression like "5+5".
+     */
+    fun evaluateSimpleMath(input: String): Long? {
+        val operators = listOf("+", "-", "*", "/")
+        val operator = operators.find { input.contains(it) } ?: return null
+        val parts = input.split(operator).map { it.trim().toLongOrNull() }
+        if (parts.size != 2 || parts[0] == null || parts[1] == null) return null
+        
+        val a = parts[0]!!
+        val b = parts[1]!!
+        
+        return when (operator) {
+            "+" -> a + b
+            "-" -> a - b
+            "*" -> a * b
+            "/" -> if (b != 0L) a / b else null
+            else -> null
+        }
+    }
 }

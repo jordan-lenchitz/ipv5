@@ -2,6 +2,7 @@ package com.example.ipv5
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.net.InetAddress
 import java.net.URL
 
 actual suspend fun fetchIp(v6: Boolean): String = withContext(Dispatchers.IO) {
@@ -22,5 +23,24 @@ actual suspend fun fetchIp(v6: Boolean): String = withContext(Dispatchers.IO) {
         }
     } catch (e: Exception) {
         "Unavailable"
+    }
+}
+
+actual suspend fun pingHost(host: String): Long? = withContext(Dispatchers.IO) {
+    try {
+        val process = Runtime.getRuntime().exec("ping -c 1 -W 2 $host")
+        val output = process.inputStream.bufferedReader().readText()
+        val match = "time=([\\d.]+)".toRegex().find(output)
+        match?.groupValues?.get(1)?.toDouble()?.toLong()
+    } catch (e: Exception) {
+        null
+    }
+}
+
+actual suspend fun resolveDns(domain: String): String? = withContext(Dispatchers.IO) {
+    try {
+        InetAddress.getByName(domain).hostAddress
+    } catch (e: Exception) {
+        null
     }
 }
