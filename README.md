@@ -1,7 +1,2 @@
-# IPv5 App
-
-This is a Kotlin Multiplatform project.
-
-## Project Structure
-- `composeApp`: Shared UI and logic.
-- `gradle`: Gradle wrapper and configuration.
+# ipv5
+a kotlin multiplatform project just for fun (for now!)
