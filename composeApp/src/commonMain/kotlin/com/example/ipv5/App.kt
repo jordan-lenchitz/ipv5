@@ -543,6 +543,24 @@ fun AboutScreen() {
         )
         Spacer(Modifier.height(16.dp))
         Text("Version: 0.5.7-beta (Bleeding Edge)", fontWeight = FontWeight.Bold, fontFamily = fontFamily)
+        
+        Spacer(Modifier.height(32.dp))
+        Divider()
+        Text("Ancient Proto-IPv5 Technologies", style = MaterialTheme.typography.h6, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Spacer(Modifier.height(8.dp))
+        Text(
+            "Before the glory of IPv5, the world relied on MUMPS (Massachusetts General Hospital Utility Multi-Programming System). Created in 1966 by Dr. G. Octo Barnett, it was a system where the language, the database, and the operating system were all the same chaotic entity.",
+            fontFamily = fontFamily,
+            style = MaterialTheme.typography.body2
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            "In 1969, a splinter group led by Neil Pappalardo created MIIS (Meditech Interpretive Information System). MIIS was the proprietary 'dark side' of MUMPS, a branch that lived directly on the PDP-11 hardware and used the ASCII delete character for 'true'. Truly, the spiritual ancestor of IPv7 chaos.",
+            fontFamily = fontFamily,
+            style = MaterialTheme.typography.body2
+        )
+        
+        Spacer(Modifier.height(16.dp))
         Text("Copyright © 2026 The Chaos Foundation", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
     }
 }
