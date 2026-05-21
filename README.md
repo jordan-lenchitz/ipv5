@@ -24,7 +24,7 @@ we at ipv5 are proud to support the full evolution of networking protocols:
 | **ipv9** | sub-ether | `yesterday.3pm` | packets arrive before they are sent |
 
 ### install
-to build and install on a connected USB-debug-mode android 13+ device 
+connect a USB-debug-mode android 13+ device and then run
 `apple hates ipv5 sorry not sorry`
 ```bash
 ./gradlew installdebug
