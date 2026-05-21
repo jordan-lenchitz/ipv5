@@ -25,7 +25,9 @@ we at ipv5 are proud to support the full evolution of networking protocols:
 
 ### install
 connect a USB-debug-mode android 13+ device and then run
-`apple hates ipv5 sorry not sorry`
 ```bash
 ./gradlew installdebug
 ```
+
+### faq
+apple? nope
