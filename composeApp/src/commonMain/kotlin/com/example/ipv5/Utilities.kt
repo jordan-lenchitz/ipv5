@@ -1,0 +1,35 @@
+package com.example.ipv5
+
+import kotlin.random.Random
+
+object IPv5Utilities {
+
+    /**
+     * XORs a "MAC address" with the first two octets of an IPv5 address.
+     */
+    fun entangleMac(ipv5: IPv5Address, mac: String): String {
+        val macBytes = mac.split(":").mapNotNull { it.toIntOrNull(16) }
+        if (macBytes.isEmpty()) return "INVALID MAC"
+        
+        val entangledOctets = ipv5.octets.toMutableList()
+        entangledOctets[0] = entangledOctets[0] xor (macBytes.getOrElse(0) { 0 })
+        entangledOctets[1] = entangledOctets[1] xor (macBytes.getOrElse(1) { 0 })
+        
+        return entangledOctets.joinToString(":") { it.toString(16).uppercase().padStart(2, '0') }
+    }
+
+    /**
+     * Predicts a port based on battery percentage and current timestamp.
+     */
+    fun predictPort(batteryPercentage: Int): Int {
+        val timeFactor = (System.currentTimeMillis() % 1000).toInt()
+        return (1024 + (batteryPercentage * 13) + timeFactor) % 65535
+    }
+
+    /**
+     * Simulates a ping with artificially inflated latency.
+     */
+    fun getBoomerangLatency(): Long {
+        return Random.nextLong(1500, 5000) // 1.5s to 5s for localhost
+    }
+}
