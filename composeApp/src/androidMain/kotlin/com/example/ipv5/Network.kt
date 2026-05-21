@@ -13,7 +13,7 @@ actual suspend fun fetchIp(v6: Boolean): String = withContext(Dispatchers.IO) {
             val parts = ip.split(".")
             if (parts.size == 4) {
                 val hexParts = parts.map { it.toIntOrNull()?.toString(16)?.padStart(2, '0') ?: "00" }
-                "2001:db8:85a3:8d3:1319:8a2e:${hexParts[0]}${hexParts[1]}:${hexParts[2]}${hexParts[3]} (Fake)"
+                "2001:db8:85a3:8d3:1319:8a2e:${hexParts[0]}${hexParts[1]}:${hexParts[2]}${hexParts[3]} (Realn't)"
             } else {
                 "Not Found (Your ISP is weak)"
             }

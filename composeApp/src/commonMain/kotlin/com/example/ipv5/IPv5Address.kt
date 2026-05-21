@@ -54,5 +54,10 @@ data class IPv5Address(
                 quantumEntanglementIndex = Random.nextInt(1000, 9999)
             )
         }
+
+        fun randomIPv7(): String {
+            val charPool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+            return (1..12).map { charPool[Random.nextInt(charPool.length)] }.joinToString("") + "=="
+        }
     }
 }

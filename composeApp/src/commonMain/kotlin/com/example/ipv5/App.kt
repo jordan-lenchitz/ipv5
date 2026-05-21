@@ -86,6 +86,7 @@ fun DashboardScreen() {
     val titleFont = if (isIpv7) FontFamily.Cursive else FontFamily.Default
     
     var ip by remember { mutableStateOf(IPv5Address.random()) }
+    var ipv7Address by remember { mutableStateOf(IPv5Address.randomIPv7()) }
     var realIpv4 by remember { mutableStateOf("Fetching...") }
     var realIpv6 by remember { mutableStateOf("Fetching...") }
     val scope = rememberCoroutineScope()
@@ -104,6 +105,11 @@ fun DashboardScreen() {
         Text("IPv4 (Boring): $realIpv4", color = if(isIpv7) Color.Green else Color.Gray, fontFamily = fontFamily)
         Text("IPv6 (Try-hard): $realIpv6", color = if(isIpv7) Color.Red else Color.Gray, fontFamily = fontFamily)
 
+        if (isIpv7) {
+            Spacer(Modifier.height(8.dp))
+            Text("IPv7 (PREMIUM): $ipv7Address", color = Color.Yellow, fontFamily = fontFamily, fontWeight = FontWeight.ExtraBold)
+        }
+
         Spacer(Modifier.height(32.dp))
         Text("Current Dynamic IPv5:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
         Card(
@@ -120,7 +126,10 @@ fun DashboardScreen() {
             )
         }
         Button(
-            onClick = { ip = IPv5Address.random() },
+            onClick = { 
+                ip = IPv5Address.random()
+                if (isIpv7) ipv7Address = IPv5Address.randomIPv7()
+            },
             colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Red else MaterialTheme.colors.primary)
         ) {
             Text("Re-polarize Quantum Field", fontFamily = fontFamily, color = if(isIpv7) Color.White else Color.Unspecified)
