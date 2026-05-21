@@ -416,15 +416,15 @@ fun SettingsScreen() {
         
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
             Text("Enable Quantum Routing", modifier = Modifier.weight(1f))
-            Switch(checked = quantumRouting, onValueChange = { quantumRouting = it })
+            Switch(checked = quantumRouting, onCheckedChange = { quantumRouting = it })
         }
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
             Text("Bypass Mainframe (Risky)", modifier = Modifier.weight(1f))
-            Switch(checked = bypassMainframe, onValueChange = { bypassMainframe = it })
+            Switch(checked = bypassMainframe, onCheckedChange = { bypassMainframe = it })
         }
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
             Text("Carrier Pigeon Priority", modifier = Modifier.weight(1f))
-            Switch(checked = pigeonPriority, onValueChange = { pigeonPriority = it })
+            Switch(checked = pigeonPriority, onCheckedChange = { pigeonPriority = it })
         }
         
         Spacer(Modifier.height(32.dp))
