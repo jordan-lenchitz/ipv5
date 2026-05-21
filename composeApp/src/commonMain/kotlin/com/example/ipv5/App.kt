@@ -1,5 +1,6 @@
 package com.example.ipv5
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,7 +11,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,10 +36,15 @@ sealed class Screen(val route: String, val label: String, val icon: @Composable 
 @Composable
 fun App() {
     val navController = rememberNavController()
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    
+    val bgColor = if (isIpv7) Color(0xFFFF00FF) else MaterialTheme.colors.background // Magenta in IPv7
+    val navColor = if (isIpv7) Color.Yellow else MaterialTheme.colors.surface
+
     MaterialTheme {
         Scaffold(
             bottomBar = {
-                BottomNavigation(backgroundColor = MaterialTheme.colors.surface) {
+                BottomNavigation(backgroundColor = navColor) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = navBackStackEntry?.destination?.route
                     val screens = listOf(Screen.Dashboard, Screen.Security, Screen.Predictor, Screen.Ping, Screen.DNS, Screen.IPv7)
@@ -43,7 +52,7 @@ fun App() {
                     screens.forEach { screen ->
                         BottomNavigationItem(
                             icon = screen.icon,
-                            label = { Text(screen.label) },
+                            label = { Text(screen.label, fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default) },
                             selected = currentRoute == screen.route,
                             onClick = {
                                 navController.navigate(screen.route) {
@@ -56,13 +65,15 @@ fun App() {
                 }
             }
         ) { innerPadding ->
-            NavHost(navController, startDestination = Screen.Dashboard.route, modifier = Modifier.padding(innerPadding)) {
-                composable(Screen.Dashboard.route) { DashboardScreen() }
-                composable(Screen.Security.route) { SecurityScreen() }
-                composable(Screen.Predictor.route) { PredictorScreen() }
-                composable(Screen.Ping.route) { PingScreen() }
-                composable(Screen.DNS.route) { DnsScreen() }
-                composable(Screen.IPv7.route) { Ipv7Screen() }
+            Box(modifier = Modifier.padding(innerPadding).fillMaxSize().background(bgColor)) {
+                NavHost(navController, startDestination = Screen.Dashboard.route) {
+                    composable(Screen.Dashboard.route) { DashboardScreen() }
+                    composable(Screen.Security.route) { SecurityScreen() }
+                    composable(Screen.Predictor.route) { PredictorScreen() }
+                    composable(Screen.Ping.route) { PingScreen() }
+                    composable(Screen.DNS.route) { DnsScreen() }
+                    composable(Screen.IPv7.route) { Ipv7Screen() }
+                }
             }
         }
     }
@@ -70,6 +81,10 @@ fun App() {
 
 @Composable
 fun DashboardScreen() {
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
+    val titleFont = if (isIpv7) FontFamily.Cursive else FontFamily.Default
+    
     var ip by remember { mutableStateOf(IPv5Address.random()) }
     var realIpv4 by remember { mutableStateOf("Fetching...") }
     var realIpv6 by remember { mutableStateOf("Fetching...") }
@@ -81,28 +96,37 @@ fun DashboardScreen() {
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("IPv5 Dashboard", style = MaterialTheme.typography.h4)
+        Text("IPv5 Dashboard", style = MaterialTheme.typography.h3, fontFamily = titleFont, color = if(isIpv7) Color.Cyan else Color.Unspecified)
         Spacer(Modifier.height(16.dp))
         
-        Text("Legacy Protocols:", style = MaterialTheme.typography.h6)
-        Text("IPv4 (Boring): $realIpv4", color = Color.Gray)
-        Text("IPv6 (Try-hard): $realIpv6", color = Color.Gray)
+        Text("Legacy Protocols:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
+        Text("IPv3 (Deprecated): 192.168.1.???", color = Color.Gray, fontFamily = fontFamily, fontWeight = FontWeight.Bold)
+        Text("IPv4 (Boring): $realIpv4", color = if(isIpv7) Color.Green else Color.Gray, fontFamily = fontFamily)
+        Text("IPv6 (Try-hard): $realIpv6", color = if(isIpv7) Color.Red else Color.Gray, fontFamily = fontFamily)
 
         Spacer(Modifier.height(32.dp))
-        Text("Current Dynamic IPv5:", style = MaterialTheme.typography.h6)
-        Card(elevation = 4.dp, modifier = Modifier.padding(16.dp)) {
+        Text("Current Dynamic IPv5:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
+        Card(
+            elevation = if(isIpv7) 24.dp else 4.dp, 
+            modifier = Modifier.padding(16.dp), 
+            backgroundColor = if(isIpv7) Color.Black else MaterialTheme.colors.surface
+        ) {
             Text(
                 ip.toString(),
                 modifier = Modifier.padding(24.dp),
                 style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.primary
+                color = if(isIpv7) Color.Yellow else MaterialTheme.colors.primary,
+                fontFamily = fontFamily
             )
         }
-        Button(onClick = { ip = IPv5Address.random() }) {
-            Text("Re-polarize Quantum Field (Randomize)")
+        Button(
+            onClick = { ip = IPv5Address.random() },
+            colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Red else MaterialTheme.colors.primary)
+        ) {
+            Text("Re-polarize Quantum Field", fontFamily = fontFamily, color = if(isIpv7) Color.White else Color.Unspecified)
         }
         Spacer(Modifier.height(16.dp))
-        Text("IPv5 Protocol Status: HYPER-ACTIVE", color = Color(0xFF4CAF50))
+        Text("IPv5 Protocol Status: ${if (isIpv7) "MIND BLOWN" else "HYPER-ACTIVE"}", color = if(isIpv7) Color.Blue else Color(0xFF4CAF50), fontSize = if(isIpv7) 24.sp else 16.sp, fontFamily = titleFont)
     }
 }
 
@@ -111,22 +135,24 @@ fun SecurityScreen() {
     var mac by remember { mutableStateOf("00:1A:2B:3C:4D:5E") }
     var ipv5 by remember { mutableStateOf(IPv5Address.random()) }
     var entangled by remember { mutableStateOf("") }
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("MAC Entanglement", style = MaterialTheme.typography.h4)
-        Text("XOR security for the modern age.", style = MaterialTheme.typography.caption)
+        Text("MAC Entanglement", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Text("XOR security for the modern age.", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
         Spacer(Modifier.height(16.dp))
         TextField(value = mac, onValueChange = { mac = it }, label = { Text("Device MAC Address") })
         Spacer(Modifier.height(8.dp))
-        Text("Base IPv5: ${ipv5}")
+        Text("Base IPv5: ${ipv5}", fontFamily = fontFamily)
         Spacer(Modifier.height(16.dp))
         Button(onClick = { entangled = IPv5Utilities.entangleMac(ipv5, mac) }) {
-            Text("Entangle Security")
+            Text("Entangle Security", fontFamily = fontFamily)
         }
         if (entangled.isNotEmpty()) {
             Spacer(Modifier.height(16.dp))
-            Text("Entangled IPv5 Address:", style = MaterialTheme.typography.h6)
-            Text(entangled, color = Color.Magenta, style = MaterialTheme.typography.h5)
+            Text("Entangled IPv5 Address:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
+            Text(entangled, color = if(isIpv7) Color.White else Color.Magenta, style = MaterialTheme.typography.h5, fontFamily = fontFamily, modifier = Modifier.background(if(isIpv7) Color.Black else Color.Transparent))
         }
     }
 }
@@ -135,19 +161,21 @@ fun SecurityScreen() {
 fun PredictorScreen() {
     var battery by remember { mutableStateOf(42) }
     var port by remember { mutableStateOf(0) }
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Dynamic Port Predictor", style = MaterialTheme.typography.h4)
-        Text("Ports determined by energy levels.", style = MaterialTheme.typography.caption)
+        Text("Dynamic Port Predictor", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Text("Ports determined by energy levels.", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
         Spacer(Modifier.height(16.dp))
-        Text("Simulated Battery: ${battery}%")
+        Text("Simulated Battery: ${battery}%", fontFamily = fontFamily)
         Slider(value = battery.toFloat(), onValueChange = { battery = it.toInt() }, valueRange = 0f..100f)
         Spacer(Modifier.height(16.dp))
         Button(onClick = { port = IPv5Utilities.predictPort(battery) }) {
-            Text("Predict Active Port")
+            Text("Predict Active Port", fontFamily = fontFamily)
         }
         if (port != 0) {
-            Text("Suggested Port: $port", style = MaterialTheme.typography.h5, color = Color(0xFF4CAF50))
+            Text("Suggested Port: $port", style = MaterialTheme.typography.h5, color = if(isIpv7) Color.Red else Color(0xFF4CAF50), fontFamily = fontFamily)
         }
     }
 }
@@ -158,30 +186,32 @@ fun PingScreen() {
     var results = remember { mutableStateListOf<String>() }
     var pinging by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Boomerang Ping", style = MaterialTheme.typography.h4)
-        Text("Routes localhost through the moon for accuracy.", style = MaterialTheme.typography.caption)
+        Text("Boomerang Ping", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Text("Routes localhost through the moon for accuracy.", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
         TextField(value = host, onValueChange = { host = it }, label = { Text("Target Host") }, modifier = Modifier.fillMaxWidth())
         Button(onClick = {
             scope.launch {
                 pinging = true
                 results.add(0, "Pinging $host via Boomerang Route...")
                 repeat(4) {
-                    delay(1000)
+                    delay(if(isIpv7) 100 else 1000) // FASTER in IPv7 mode
                     val latency = IPv5Utilities.getBoomerangLatency()
                     results.add(0, "Reply from $host: bytes=40 time=${latency}ms TTL=1")
                 }
                 pinging = false
             }
         }, enabled = !pinging) {
-            Text(if (pinging) "Pinging..." else "Start Boomerang Ping")
+            Text(if (pinging) "Pinging..." else "Start Boomerang Ping", fontFamily = fontFamily)
         }
         
         Spacer(Modifier.height(16.dp))
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(results) { res ->
-                Text(res, style = MaterialTheme.typography.overline)
+                Text(res, style = MaterialTheme.typography.overline, fontFamily = fontFamily, fontSize = if(isIpv7) 14.sp else 10.sp)
             }
         }
     }
@@ -193,9 +223,11 @@ fun DnsScreen() {
     var logs = remember { mutableStateListOf<String>() }
     var resolving by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Slow-DNS Resolver", style = MaterialTheme.typography.h4)
+        Text("Slow-DNS Resolver", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
         TextField(value = url, onValueChange = { url = it }, label = { Text("URL to resolve") }, modifier = Modifier.fillMaxWidth())
         Button(onClick = {
             scope.launch {
@@ -204,19 +236,19 @@ fun DnsScreen() {
                 val steps = listOf("Contacting root servers...", "Reticulating splines...", "Consulting the Oracle...", "Waiting for carrier pigeon...", "IPv5 found!")
                 for (step in steps) {
                     logs.add(step)
-                    delay(Random.nextLong(1000, 3000))
+                    delay(if(isIpv7) Random.nextLong(10, 100) else Random.nextLong(1000, 3000)) // FASTER in IPv7 mode
                 }
                 logs.add("Resolved to: ${IPv5Address.random()}")
                 resolving = false
             }
         }, enabled = !resolving) {
-            Text(if (resolving) "Resolving..." else "Resolve URL")
+            Text(if (resolving) "Resolving..." else "Resolve URL", fontFamily = fontFamily)
         }
         
         Spacer(Modifier.height(16.dp))
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(logs) { log ->
-                Text("> $log", style = MaterialTheme.typography.overline)
+                Text("> $log", style = MaterialTheme.typography.overline, fontFamily = fontFamily, fontSize = if(isIpv7) 16.sp else 10.sp, color = if(isIpv7) Color.White else Color.Unspecified)
             }
         }
     }
@@ -224,25 +256,20 @@ fun DnsScreen() {
 
 @Composable
 fun Ipv7Screen() {
-    var loading by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        if (loading) {
-            CircularProgressIndicator()
-        } else {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("IPv7 Premium", style = MaterialTheme.typography.h3)
-                Text("9-octet Base64 Addresses", style = MaterialTheme.typography.h6)
-                Spacer(Modifier.height(24.dp))
-                Button(onClick = {
-                    scope.launch {
-                        loading = true
-                        delay(100000)
-                    }
-                }) {
-                    Text("Upgrade to IPv7 (0.00 BTC)")
-                }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("IPv7 Premium", style = MaterialTheme.typography.h2, fontFamily = if(isIpv7) FontFamily.Monospace else FontFamily.Default, color = if(isIpv7) Color.White else Color.Unspecified)
+            Text("9-octet Base64 Addresses", style = MaterialTheme.typography.h5, color = if(isIpv7) Color.Yellow else Color.Unspecified)
+            Spacer(Modifier.height(24.dp))
+            Button(
+                onClick = {
+                    GlobalAppState.ipv7Mode.value = !GlobalAppState.ipv7Mode.value
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Green else MaterialTheme.colors.primary)
+            ) {
+                Text(if(isIpv7) "DEACTIVATE CHAOS" else "UNLEASH IPv7 CHAOS")
             }
         }
     }
