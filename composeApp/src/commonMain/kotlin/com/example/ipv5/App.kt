@@ -1,10 +1,13 @@
 package com.example.ipv5
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -32,18 +35,69 @@ sealed class Screen(val route: String, val label: String, val icon: @Composable 
     object Ping : Screen("ping", "Ping", { Icon(Icons.Default.Send, null) })
     object DNS : Screen("dns", "DNS", { Icon(Icons.Default.Search, null) })
     object IPv7 : Screen("ipv7", "IPv7+", { Icon(Icons.Default.Star, null) })
+    
+    // New Drawer Screens
+    object About : Screen("about", "About", { Icon(Icons.Default.Info, null) })
+    object Settings : Screen("settings", "Settings", { Icon(Icons.Default.Settings, null) })
+    object Admin : Screen("admin", "Admin Panel", { Icon(Icons.Default.Lock, null) }) // Reusing Lock icon or Build
+    object Dev : Screen("dev", "Dev Panel", { Icon(Icons.Default.Build, null) })
 }
 
 @Composable
 fun App() {
     val navController = rememberNavController()
     val isIpv7 = GlobalAppState.ipv7Mode.value
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
     
     val bgColor = if (isIpv7) Color(0xFFFF00FF) else MaterialTheme.colors.background // Magenta in IPv7
     val navColor = if (isIpv7) Color.Yellow else MaterialTheme.colors.surface
 
     MaterialTheme {
         Scaffold(
+            scaffoldState = scaffoldState,
+            topBar = {
+                TopAppBar(
+                    title = { Text("IPv5 ${if(isIpv7) "CHAOS" else "Manager"}", fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default) },
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
+                    },
+                    backgroundColor = navColor
+                )
+            },
+            drawerContent = {
+                Column(modifier = Modifier.fillMaxSize().background(bgColor)) {
+                    Text(
+                        "System Operations", 
+                        modifier = Modifier.padding(16.dp), 
+                        style = MaterialTheme.typography.h6,
+                        fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default
+                    )
+                    Divider()
+                    val drawerScreens = listOf(Screen.About, Screen.Settings, Screen.Admin, Screen.Dev)
+                    drawerScreens.forEach { screen ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.navigate(screen.route) {
+                                        popUpTo(navController.graph.startDestinationId)
+                                        launchSingleTop = true
+                                    }
+                                    scope.launch { scaffoldState.drawerState.close() }
+                                }
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            screen.icon()
+                            Spacer(Modifier.width(32.dp))
+                            Text(screen.label, fontFamily = if(isIpv7) FontFamily.Monospace else FontFamily.Default)
+                        }
+                    }
+                }
+            },
             bottomBar = {
                 BottomNavigation(backgroundColor = navColor) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -74,6 +128,11 @@ fun App() {
                     composable(Screen.Ping.route) { PingScreen() }
                     composable(Screen.DNS.route) { DnsScreen() }
                     composable(Screen.IPv7.route) { Ipv7Screen() }
+                    
+                    composable(Screen.About.route) { AboutScreen() }
+                    composable(Screen.Settings.route) { SettingsScreen() }
+                    composable(Screen.Admin.route) { AdminScreen() }
+                    composable(Screen.Dev.route) { DevScreen() }
                 }
             }
         }
@@ -316,6 +375,118 @@ fun Ipv7Screen() {
                 colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Green else MaterialTheme.colors.primary)
             ) {
                 Text(if(isIpv7) "DEACTIVATE CHAOS" else "UNLEASH IPv7 CHAOS")
+            }
+        }
+    }
+}
+
+@Composable
+fun AboutScreen() {
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
+    
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
+        Text("About IPv5", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Spacer(Modifier.height(16.dp))
+        Text(
+            "IPv5 is the revolutionary networking protocol that skipped the number 4 (well, 4 was taken) and went straight to 5, only to be immediately superseded by the chaos of IPv7.",
+            fontFamily = fontFamily
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            "Developed by a team of highly caffeinated octopuses, IPv5 uses quantum-entangled MAC addresses and battery-powered port prediction to ensure that your data stays exactly where it was supposed to be (mostly).",
+            fontFamily = fontFamily
+        )
+        Spacer(Modifier.height(16.dp))
+        Text("Version: 0.5.7-beta (Bleeding Edge)", fontWeight = FontWeight.Bold, fontFamily = fontFamily)
+        Text("Copyright © 2026 The Chaos Foundation", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
+    }
+}
+
+@Composable
+fun SettingsScreen() {
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    var quantumRouting by remember { mutableStateOf(true) }
+    var bypassMainframe by remember { mutableStateOf(false) }
+    var pigeonPriority by remember { mutableStateOf(true) }
+
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Text("System Settings", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Spacer(Modifier.height(24.dp))
+        
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+            Text("Enable Quantum Routing", modifier = Modifier.weight(1f))
+            Switch(checked = quantumRouting, onValueChange = { quantumRouting = it })
+        }
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+            Text("Bypass Mainframe (Risky)", modifier = Modifier.weight(1f))
+            Switch(checked = bypassMainframe, onValueChange = { bypassMainframe = it })
+        }
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+            Text("Carrier Pigeon Priority", modifier = Modifier.weight(1f))
+            Switch(checked = pigeonPriority, onValueChange = { pigeonPriority = it })
+        }
+        
+        Spacer(Modifier.height(32.dp))
+        Button(onClick = { GlobalAppState.ipv7Mode.value = !isIpv7 }, modifier = Modifier.fillMaxWidth()) {
+            Text(if(isIpv7) "RESTORE SANITY" else "ACTIVATE IPv7 PROTOCOL")
+        }
+    }
+}
+
+@Composable
+fun AdminScreen() {
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Text("Admin Panel", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Text("Restricted Access - Level 5 Clearance Required", color = Color.Red, style = MaterialTheme.typography.caption)
+        Spacer(Modifier.height(24.dp))
+        
+        Text("System Load: OVER 9000%", style = MaterialTheme.typography.h6)
+        LinearProgressIndicator(progress = 0.99f, modifier = Modifier.fillMaxWidth(), color = Color.Red)
+        Spacer(Modifier.height(16.dp))
+        
+        Text("Active Entanglements: 1,337", style = MaterialTheme.typography.body1)
+        Text("Banned IPs: localhost, 127.0.0.1, ::1", style = MaterialTheme.typography.body1)
+        Text("Mainframe Status: VIBRATING", style = MaterialTheme.typography.body1)
+        
+        Spacer(Modifier.weight(1f))
+        Button(onClick = { /* Do nothing */ }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(backgroundColor = Color.Black)) {
+            Text("SELF-DESTRUCT (MOCK)", color = Color.White)
+        }
+    }
+}
+
+@Composable
+fun DevScreen() {
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState() // Note: This is local to DevScreen, maybe use a SnackbarHostState
+
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Text("Dev Tools", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Spacer(Modifier.height(24.dp))
+        
+        Button(onClick = { /* Force crash logic */ }, modifier = Modifier.fillMaxWidth()) {
+            Text("Force NullPointerException")
+        }
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = { /* Clear cache */ }, modifier = Modifier.fillMaxWidth()) {
+            Text("Vaporize Local Cache")
+        }
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = { /* Simulate drop */ }, modifier = Modifier.fillMaxWidth()) {
+            Text("Simulate Solar Flare Interference")
+        }
+        
+        Spacer(Modifier.height(32.dp))
+        Text("Developer Logs:", style = MaterialTheme.typography.h6)
+        Card(modifier = Modifier.fillMaxWidth().height(200.dp), backgroundColor = Color.DarkGray) {
+            LazyColumn(modifier = Modifier.padding(8.dp)) {
+                item { Text("DEBUG: Reticulating splines...", color = Color.Green, fontFamily = FontFamily.Monospace) }
+                item { Text("WARN: Quantum fluctuation detected in sector 7G", color = Color.Yellow, fontFamily = FontFamily.Monospace) }
+                item { Text("ERROR: Pizza delivery failed (Timeout)", color = Color.Red, fontFamily = FontFamily.Monospace) }
+                item { Text("DEBUG: Entangling MACs with coffee...", color = Color.Green, fontFamily = FontFamily.Monospace) }
             }
         }
     }
