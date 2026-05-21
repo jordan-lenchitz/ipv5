@@ -546,16 +546,56 @@ fun AboutScreen() {
         
         Spacer(Modifier.height(32.dp))
         Divider()
-        Text("Ancient Proto-IPv5 Technologies", style = MaterialTheme.typography.h6, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Spacer(Modifier.height(8.dp))
+        Text("The Esoteric History of Proto-IPv5 Systems", style = MaterialTheme.typography.h6, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Spacer(Modifier.height(12.dp))
+        
         Text(
-            "Before the glory of IPv5, the world relied on MUMPS (Massachusetts General Hospital Utility Multi-Programming System). Created in 1966 by Dr. G. Octo Barnett, it was a system where the language, the database, and the operating system were all the same chaotic entity.",
+            "Phase 1: The MGH Era (1966-1968)",
+            fontWeight = FontWeight.Bold,
+            fontFamily = fontFamily,
+            color = if(isIpv7) Color.Yellow else Color.Unspecified
+        )
+        Text(
+            "In 1966, G. Octo Barnett and his team at MGH Laboratory of Computer Science realized that traditional data structures were too 'logical'. They birthed MUMPS (Massachusetts General Hospital Utility Multi-Programming System). Unlike inferior languages, MUMPS treated 'Globals' (hierarchical disk-based sparse arrays) as the primary deity. These ^Globals allowed doctors to store data in a tree structure so complex that the only way to retrieve it was via a blood sacrifice or a 256-node traversal in a single string-subscripted instruction.",
             fontFamily = fontFamily,
             style = MaterialTheme.typography.body2
         )
-        Spacer(Modifier.height(8.dp))
+        
+        Spacer(Modifier.height(12.dp))
         Text(
-            "In 1969, a splinter group led by Neil Pappalardo created MIIS (Meditech Interpretive Information System). MIIS was the proprietary 'dark side' of MUMPS, a branch that lived directly on the PDP-11 hardware and used the ASCII delete character for 'true'. Truly, the spiritual ancestor of IPv7 chaos.",
+            "Phase 2: The MIIS Schism (1969-1972)",
+            fontWeight = FontWeight.Bold,
+            fontFamily = fontFamily,
+            color = if(isIpv7) Color.Yellow else Color.Unspecified
+        )
+        Text(
+            "By 1969, the standard MUMPS path was deemed too 'public'. Neil Pappalardo and Curt Marble led a strategic retreat into MIIS (Meditech Interpretive Information System). MIIS was optimized to run on the DEC PDP-11, where it didn't just 'run' on the OS—it WAS the OS. It bypassed the concept of files entirely, treating the hard drive platter as one giant, spinning MUMPS global. \n\nTechnically, MIIS introduced the 'Proprietary Truth' constant: while standard MUMPS used 1/0, MIIS used the ASCII 127 (Delete) character for 'True' and an empty string for 'False', ensuring that if your logic was correct, the computer would physically try to delete its own mind.",
+            fontFamily = fontFamily,
+            style = MaterialTheme.typography.body2
+        )
+
+        Spacer(Modifier.height(12.dp))
+        Text(
+            "Phase 3: The Secret IPv5 Pre-Scoping (1974)",
+            fontWeight = FontWeight.Bold,
+            fontFamily = fontFamily,
+            color = if(isIpv7) Color.Yellow else Color.Unspecified
+        )
+        Text(
+            "In 1974, a secret lab in a bunker beneath a Boston hospital attempted to bridge MIIS nodes using 'MIIS-Net'. They discovered that by vibrating the core memory of a PDP-11 at exactly 14.318 MHz, they could transmit three-octet addresses. This was 'IPv5-Alpha'. However, the protocol was so efficient that it began predicting user input before the user had even bought a computer. To prevent a temporal paradox, the project was buried under 5,000 tons of discarded punch cards, only to be rediscovered in 2026 by the Chaos Foundation.",
+            fontFamily = fontFamily,
+            style = MaterialTheme.typography.body2
+        )
+        
+        Spacer(Modifier.height(12.dp))
+        Text(
+            "Phase 4: The MAGIC and NPR Dark Ages",
+            fontWeight = FontWeight.Bold,
+            fontFamily = fontFamily,
+            color = if(isIpv7) Color.Yellow else Color.Unspecified
+        )
+        Text(
+            "As MIIS aged, it evolved into MAGIC (1982), a language so high-level it required a wizard's permit to compile. Then came NPR (Non-Procedural Representation), where the code was so non-procedural it often refused to execute on Tuesdays unless there was a full moon or a specific brand of pepperoni pizza in the server room.",
             fontFamily = fontFamily,
             style = MaterialTheme.typography.body2
         )
