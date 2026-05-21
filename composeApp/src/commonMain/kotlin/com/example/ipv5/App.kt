@@ -71,10 +71,25 @@ fun App() {
 @Composable
 fun DashboardScreen() {
     var ip by remember { mutableStateOf(IPv5Address.random()) }
+    var realIpv4 by remember { mutableStateOf("Fetching...") }
+    var realIpv6 by remember { mutableStateOf("Fetching...") }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        realIpv4 = fetchIp(false)
+        realIpv6 = fetchIp(true)
+    }
+
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Text("IPv5 Dashboard", style = MaterialTheme.typography.h4)
+        Spacer(Modifier.height(16.dp))
+        
+        Text("Legacy Protocols:", style = MaterialTheme.typography.h6)
+        Text("IPv4 (Boring): $realIpv4", color = Color.Gray)
+        Text("IPv6 (Try-hard): $realIpv6", color = Color.Gray)
+
         Spacer(Modifier.height(32.dp))
-        Text("Current Dynamic IP:", style = MaterialTheme.typography.h6)
+        Text("Current Dynamic IPv5:", style = MaterialTheme.typography.h6)
         Card(elevation = 4.dp, modifier = Modifier.padding(16.dp)) {
             Text(
                 ip.toString(),
@@ -84,10 +99,10 @@ fun DashboardScreen() {
             )
         }
         Button(onClick = { ip = IPv5Address.random() }) {
-            Text("Renew Lease (Randomize)")
+            Text("Re-polarize Quantum Field (Randomize)")
         }
         Spacer(Modifier.height(16.dp))
-        Text("IPv5 Protocol Status: COMPROMISED", color = Color.Red)
+        Text("IPv5 Protocol Status: HYPER-ACTIVE", color = Color(0xFF4CAF50))
     }
 }
 
