@@ -30,4 +30,4 @@ connect a USB-debug-mode android 13+ device and then run
 ```
 
 ### faq
-apple? nope
+apple / iOS support when? never
