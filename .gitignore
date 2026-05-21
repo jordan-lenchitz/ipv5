@@ -22,5 +22,10 @@ out/
 .DS_Store
 Thumbs.db
 
+# Secrets
+*.keystore
+*.jks
+secret.properties
+
 # App specific
 ipv5-app-offline-build/
