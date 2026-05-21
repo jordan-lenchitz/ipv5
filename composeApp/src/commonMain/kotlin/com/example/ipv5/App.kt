@@ -599,6 +599,25 @@ fun AboutScreen() {
             fontFamily = fontFamily,
             style = MaterialTheme.typography.body2
         )
+
+        Spacer(Modifier.height(32.dp))
+        Divider()
+        Text("THE SACRED TEXTS (1000+ Lines of Pure Chaos)", style = MaterialTheme.typography.h6, fontFamily = if(isIpv7) FontFamily.Monospace else FontFamily.Default)
+        Spacer(Modifier.height(8.dp))
+        
+        Card(
+            modifier = Modifier.fillMaxWidth().height(400.dp),
+            backgroundColor = if(isIpv7) Color.Black else Color.DarkGray
+        ) {
+            Box(modifier = Modifier.padding(8.dp).verticalScroll(rememberScrollState())) {
+                Text(
+                    IPv5Lore.HUGE_HISTORY,
+                    color = if(isIpv7) Color.Green else Color.White,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 10.sp
+                )
+            }
+        }
         
         Spacer(Modifier.height(16.dp))
         Text("Copyright © 2026 The Chaos Foundation", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
