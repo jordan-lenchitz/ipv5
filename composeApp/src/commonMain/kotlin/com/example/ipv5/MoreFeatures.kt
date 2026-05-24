@@ -20,7 +20,7 @@ object MoreFeatures {
     fun ipv4ExhaustionSimulator(packet: String) = if (Random.nextInt(100) < 30) null else packet
     fun ipv5Literal() = "5.5.5.5"
     fun sslTlsDowngrader() = "SSLv2 Enabled"
-    fun macAddressRandomizer() = "00:${Random.nextInt(10..99)}:${Random.nextInt(10..99)}:XX:YY:ZZ"
+    fun macAddressRandomizer() = "00:${Random.nextInt(10, 100)}:${Random.nextInt(10, 100)}:XX:YY:ZZ"
     fun packetFragmentationMaximizer(packet: String) = packet.chunked(1)
     fun tracerouteVisualizer() = "Map generated. You are in the ocean."
     fun portKnocker() = listOf(80, 443, 22, 21, 23).joinToString(" knock ")
