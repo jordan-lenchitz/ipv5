@@ -35,6 +35,7 @@ sealed class Screen(val route: String, val label: String, val icon: @Composable 
     object Ping : Screen("ping", "Ping", { Icon(Icons.Default.Send, null) })
     object DNS : Screen("dns", "DNS", { Icon(Icons.Default.Search, null) })
     object IPv7 : Screen("ipv7", "IPv7+", { Icon(Icons.Default.Star, null) })
+    object More : Screen("more", "More (36)", { Icon(Icons.Default.List, null) })
     
     // New Drawer Screens
     object About : Screen("about", "About", { Icon(Icons.Default.Info, null) })
@@ -102,7 +103,7 @@ fun App() {
                 BottomNavigation(backgroundColor = navColor) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentRoute = navBackStackEntry?.destination?.route
-                    val screens = listOf(Screen.Dashboard, Screen.Security, Screen.Predictor, Screen.Ping, Screen.DNS, Screen.IPv7)
+                    val screens = listOf(Screen.Dashboard, Screen.Security, Screen.Predictor, Screen.Ping, Screen.DNS, Screen.IPv7, Screen.More)
                     
                     screens.forEach { screen ->
                         BottomNavigationItem(
@@ -128,6 +129,7 @@ fun App() {
                     composable(Screen.Ping.route) { PingScreen() }
                     composable(Screen.DNS.route) { DnsScreen() }
                     composable(Screen.IPv7.route) { Ipv7Screen() }
+                    composable(Screen.More.route) { MoreFeaturesScreen() }
                     
                     composable(Screen.About.route) { AboutScreen() }
                     composable(Screen.Settings.route) { SettingsScreen() }
@@ -726,6 +728,70 @@ fun DevScreen() {
                 item { Text("WARN: Quantum fluctuation detected in sector 7G", color = Color.Yellow, fontFamily = FontFamily.Monospace) }
                 item { Text("ERROR: Pizza delivery failed (Timeout)", color = Color.Red, fontFamily = FontFamily.Monospace) }
                 item { Text("DEBUG: Entangling MACs with coffee...", color = Color.Green, fontFamily = FontFamily.Monospace) }
+            }
+        }
+    }
+}
+
+@Composable
+fun MoreFeaturesScreen() {
+    val isIpv7 = GlobalAppState.ipv7Mode.value
+    val fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default
+    
+    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        item {
+            Text("Premium Features (Quantity > Quality)", style = MaterialTheme.typography.h4, fontFamily = fontFamily)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        val allFeatures = listOf(
+            "DNS Roulette" to MoreFeatures.dnsRoulette("example.com"),
+            "Quantum Packet Loss" to (MoreFeatures.quantumPacketLoss("Hello") ?: "Dropped!"),
+            "Blockchain ARP" to MoreFeatures.blockchainArp(),
+            "UDP Handshake" to MoreFeatures.udpHandshake(),
+            "TCP Window Breaker" to MoreFeatures.tcpWindowBreaker().toString(),
+            "HTTP/0.9 Downgrade" to MoreFeatures.http09Downgrade("request").trim(),
+            "BGP Roulette" to MoreFeatures.bgpRoulette(),
+            "ICMP Scream" to "65535 bytes of noise sent",
+            "Subnet Mask Gen" to MoreFeatures.subnetMaskGenerator(),
+            "WiFi De-auth" to MoreFeatures.wifiDeauthenticator(),
+            "Localhost LB" to MoreFeatures.localhostLoadBalancer(),
+            "IPv4 Exhaustion" to (MoreFeatures.ipv4ExhaustionSimulator("data") ?: "Out of IPs"),
+            "IPv5 Literal" to MoreFeatures.ipv5Literal(),
+            "SSL/TLS Downgrader" to MoreFeatures.sslTlsDowngrader(),
+            "MAC Randomizer" to MoreFeatures.macAddressRandomizer(),
+            "Fragmentation Max" to MoreFeatures.packetFragmentationMaximizer("test").toString(),
+            "Traceroute Visualizer" to MoreFeatures.tracerouteVisualizer(),
+            "Port Knocker" to MoreFeatures.portKnocker(),
+            "DHCP Rejector" to MoreFeatures.dhcpRejector(),
+            "Ping of Life" to MoreFeatures.pingOfLife(),
+            "Cloud Latency" to MoreFeatures.cloudLatencyInjector(10).toString() + "ms",
+            "Ethernet over DNS" to MoreFeatures.ethernetOverDns(),
+            "Bluetooth LE Web" to MoreFeatures.bluetoothLeWebServer(),
+            "VPN to Null" to MoreFeatures.vpnToNull(),
+            "NAT Transversal" to MoreFeatures.natTransversal(),
+            "SYN Flood Self-Defense" to MoreFeatures.synFloodSelfDefense(),
+            "MTU Path Discovery Denier" to MoreFeatures.mtuPathDiscoveryDenier(),
+            "BGP Hijacker" to MoreFeatures.bgpHijacker(),
+            "WEP Encryption Enforcer" to MoreFeatures.wepEncryptionEnforcer(),
+            "IP-over-Avian" to MoreFeatures.ipOverAvianCarriersSimulator(),
+            "TCP Keep-Alive Spammer" to MoreFeatures.tcpKeepAliveSpammer(),
+            "Proxy Chain Loop" to MoreFeatures.proxyChainLoop(),
+            "DNSSEC Invalidator" to MoreFeatures.dnssecInvalidator(),
+            "QoS Minimizer" to MoreFeatures.qosMinimizer(),
+            "SNMP Public Stringer" to MoreFeatures.snmpPublicCommunityStringer(),
+            "IPv6 to IPv4" to MoreFeatures.ipv6ToIpv4Translator("::1")
+        )
+        items(allFeatures) { (name, result) ->
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                elevation = 4.dp,
+                backgroundColor = if (isIpv7) Color.LightGray else MaterialTheme.colors.surface
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(name, fontWeight = FontWeight.Bold, fontFamily = fontFamily)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(result, fontFamily = fontFamily)
+                }
             }
         }
     }
