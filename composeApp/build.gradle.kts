@@ -47,10 +47,10 @@ android {
     }
     signingConfigs {
         create("release") {
-            storeFile = file("release.keystore")
-            storePassword = "ipv5-is-worse"
-            keyAlias = "ipv5-key"
-            keyPassword = "ipv5-is-worse"
+            storeFile = file("my-upload-key.keystore")
+            storePassword = project.findProperty("KEY_STORE_PASSWORD") as? String ?: "ipv5-is-worse"
+            keyAlias = project.findProperty("KEY_ALIAS") as? String ?: "ipv5-key"
+            keyPassword = project.findProperty("KEY_PASSWORD") as? String ?: "ipv5-is-worse"
         }
     }
 
