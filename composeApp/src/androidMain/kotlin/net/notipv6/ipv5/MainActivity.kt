@@ -1,9 +1,9 @@
-package com.example.ipv5
+package net.notipv6.ipv5
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.ipv5.App
+import net.notipv6.ipv5.App
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
