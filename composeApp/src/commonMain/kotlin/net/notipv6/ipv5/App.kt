@@ -1,4 +1,4 @@
-package com.example.ipv5
+package net.notipv6.ipv5
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

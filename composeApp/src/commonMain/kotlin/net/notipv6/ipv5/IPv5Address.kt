@@ -1,4 +1,4 @@
-package com.example.ipv5
+package net.notipv6.ipv5
 
 import kotlin.math.absoluteValue
 import kotlin.math.sin

@@ -1,4 +1,4 @@
-package com.example.ipv5
+package net.notipv6.ipv5
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
