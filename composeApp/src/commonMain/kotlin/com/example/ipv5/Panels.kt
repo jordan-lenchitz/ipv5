@@ -21,34 +21,62 @@ import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 @Composable
-fun DevOpsPanel() {
+fun ChaoticPanel(
+    title: String,
+    content: @Composable () -> Unit
+) {
     val isIpv7 = GlobalAppState.ipv7Mode.value
-    var progress by remember { mutableStateOf(0.8f) }
+    val font = GlobalAppState.getRandomFont()
+    val bgColor = if (isIpv7) Color(Random.nextInt()) else Color.Transparent
+
+    Column(
+        modifier = Modifier.fillMaxSize().background(bgColor).padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(title.lowercase(), style = MaterialTheme.typography.h4, fontFamily = font)
+        Spacer(Modifier.height(24.dp))
+        
+        CompositionLocalProvider(LocalTextStyle provides LocalTextStyle.current.copy(fontFamily = font)) {
+            content()
+        }
+        
+        Spacer(Modifier.height(24.dp))
+        if (isIpv7) {
+            Text("chaos detected", color = Color.Red, fontWeight = FontWeight.ExtraBold, fontFamily = font)
+        }
+    }
+}
+
+@Composable
+fun DevOpsPanel() {
+    val progress = remember { mutableStateOf(0.8f) }
     
     LaunchedEffect(Unit) {
         while(true) {
             delay(100)
-            progress -= 0.01f
-            if (progress <= 0f) progress = 1.0f
+            progress.value -= 0.01f
+            if (progress.value <= 0f) progress.value = 1.0f
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("DevOps Panel", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Text("Deploying to production on a Friday...", color = Color.Red)
-        Spacer(Modifier.height(24.dp))
-        
-        Text("Build Progress (In Reverse): ${(progress * 100).toInt()}%")
-        LinearProgressIndicator(progress = progress, modifier = Modifier.fillMaxWidth(), color = Color.Magenta)
-        
-        Spacer(Modifier.height(16.dp))
-        Text("Recent Logs:", fontWeight = FontWeight.Bold)
-        Card(backgroundColor = Color.Black, modifier = Modifier.fillMaxWidth().height(200.dp)) {
-            LazyColumn(modifier = Modifier.padding(8.dp)) {
-                item { Text("ERROR: Production DB deleted (Whoops)", color = Color.Red, fontFamily = FontFamily.Monospace) }
-                item { Text("INFO: Bypassing unit tests for 'speed'", color = Color.Yellow, fontFamily = FontFamily.Monospace) }
-                item { Text("DEBUG: Why is the server screaming?", color = Color.Green, fontFamily = FontFamily.Monospace) }
-                item { Text("FATAL: Coffee machine offline", color = Color.Magenta, fontFamily = FontFamily.Monospace) }
+    ChaoticPanel(title = "devops panel") {
+        Column {
+            Text("deploying to production on a friday...".lowercase(), color = Color.Red)
+            Spacer(Modifier.height(24.dp))
+            
+            Text("build progress (in reverse): ${(progress.value * 100).toInt()}%".lowercase())
+            LinearProgressIndicator(progress = progress.value, modifier = Modifier.fillMaxWidth(), color = Color.Magenta)
+            
+            Spacer(Modifier.height(16.dp))
+            Text("recent logs:".lowercase(), fontWeight = FontWeight.Bold)
+            Card(backgroundColor = Color.Black, modifier = Modifier.fillMaxWidth().height(200.dp)) {
+                LazyColumn(modifier = Modifier.padding(8.dp)) {
+                    item { Text("error: production db deleted (whoops)".lowercase(), color = Color.Red, fontFamily = FontFamily.Monospace) }
+                    item { Text("info: bypassing unit tests for 'speed'".lowercase(), color = Color.Yellow, fontFamily = FontFamily.Monospace) }
+                    item { Text("debug: why is the server screaming?".lowercase(), color = Color.Green, fontFamily = FontFamily.Monospace) }
+                    item { Text("fatal: coffee machine offline".lowercase(), color = Color.Magenta, fontFamily = FontFamily.Monospace) }
+                }
             }
         }
     }
@@ -56,58 +84,52 @@ fun DevOpsPanel() {
 
 @Composable
 fun FinOpsPanel() {
-    val isIpv7 = GlobalAppState.ipv7Mode.value
-    var burnRate by remember { mutableStateOf(4200.0) }
-    var totalBurned by remember { mutableStateOf(0.0) }
+    val burnRate = remember { mutableStateOf(4200.0) }
+    val totalBurned = remember { mutableStateOf(0.0) }
 
     LaunchedEffect(Unit) {
         while(true) {
             delay(10)
-            totalBurned += (burnRate / 100.0)
-            burnRate += Random.nextDouble(-10.0, 50.0)
+            totalBurned.value += (burnRate.value / 100.0)
+            burnRate.value += Random.nextDouble(-10.0, 50.0)
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("FinOps Panel", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Text("Optimizing shareholder value through chaos.", style = MaterialTheme.typography.caption)
-        Spacer(Modifier.height(24.dp))
-        
-        Text("Current Money Burn Rate: $${burnRate.toInt()}/sec", style = MaterialTheme.typography.h5, color = Color.Red)
-        Text("Total AWS Bill (Estimated): $${totalBurned.toInt()}", style = MaterialTheme.typography.h3, fontWeight = FontWeight.Bold)
-        
-        Spacer(Modifier.height(32.dp))
-        Button(onClick = { burnRate *= 2 }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)) {
-            Text("Scaling for Growth (x2 Burn)", color = Color.White)
+    ChaoticPanel(title = "finops panel") {
+        Column {
+            Text("current money burn rate: $${burnRate.value.toInt()}/sec".lowercase(), style = MaterialTheme.typography.h5, color = Color.Red)
+            Text("total aws bill (estimated): $${totalBurned.value.toInt()}".lowercase(), style = MaterialTheme.typography.h3, fontWeight = FontWeight.Bold)
+            
+            Spacer(Modifier.height(32.dp))
+            Button(onClick = { burnRate.value *= 2 }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)) {
+                Text("scaling for growth (x2 burn)".lowercase(), color = Color.White)
+            }
         }
     }
 }
 
 @Composable
 fun SplunkPanel() {
-    val isIpv7 = GlobalAppState.ipv7Mode.value
     val logs = remember { mutableStateListOf<String>() }
     
     LaunchedEffect(Unit) {
         while(true) {
             delay(Random.nextLong(500, 2000))
             val log = listOf(
-                "User breathed on keyboard",
-                "Packet felt lonely and died",
-                "Mainframe reached sentience (briefly)",
-                "Admin spilled tea on Rack 4",
-                "Gravity reversed in data center",
-                "Bit flipped by cosmic ray",
-                "Server decided it's a toaster now"
+                "user breathed on keyboard",
+                "packet felt lonely and died",
+                "mainframe reached sentience (briefly)",
+                "admin spilled tea on rack 4",
+                "gravity reversed in data center",
+                "bit flipped by cosmic ray",
+                "server decided it's a toaster now"
             ).random()
-            logs.add(0, "[${System.currentTimeMillis()}] $log")
+            logs.add(0, "[${System.currentTimeMillis()}] $log".lowercase())
             if (logs.size > 50) logs.removeAt(50)
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Splunk Panel", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Spacer(Modifier.height(16.dp))
+    ChaoticPanel(title = "splunk panel") {
         Card(backgroundColor = Color.DarkGray, modifier = Modifier.fillMaxSize()) {
             LazyColumn(modifier = Modifier.padding(8.dp)) {
                 items(logs) { log ->
@@ -120,95 +142,89 @@ fun SplunkPanel() {
 
 @Composable
 fun GrafanaPanel() {
-    val isIpv7 = GlobalAppState.ipv7Mode.value
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Grafana Dashboard", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Spacer(Modifier.height(24.dp))
-        
-        Text("Metric: Customer Satisfaction")
-        Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Red)) {
-            Text("📉", modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
-        }
-        
-        Spacer(Modifier.height(16.dp))
-        Text("Metric: CEO Bonus")
-        Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Green)) {
-            Text("📈", modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
-        }
-        
-        Spacer(Modifier.height(16.dp))
-        Text("Metric: Router Temperature")
-        Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Black)) {
-            Text("🔥", modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
+    ChaoticPanel(title = "grafana dashboard") {
+        Column {
+            Text("metric: customer satisfaction".lowercase())
+            Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Red)) {
+                Text("📉", modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
+            }
+            
+            Spacer(Modifier.height(16.dp))
+            Text("metric: ceo bonus".lowercase())
+            Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Green)) {
+                Text("📈", modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
+            }
+            
+            Spacer(Modifier.height(16.dp))
+            Text("metric: router temperature".lowercase())
+            Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Black)) {
+                Text("🔥", modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
+            }
         }
     }
 }
 
 @Composable
 fun AnsiblePanel() {
-    val isIpv7 = GlobalAppState.ipv7Mode.value
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
-        Text("Ansible Control", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Spacer(Modifier.height(16.dp))
-        
-        Text("Active Playbook: uninstall_everything.yml", fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(8.dp))
-        
-        repeat(5) { i ->
-            Card(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth()) {
-                Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Close, contentDescription = null, tint = Color.Red)
-                    Spacer(Modifier.width(8.dp))
-                    Text("TASK [Delete important database $i] *********")
+    ChaoticPanel(title = "ansible control") {
+        Column {
+            Text("active playbook: uninstall_everything.yml".lowercase(), fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(8.dp))
+            
+            repeat(5) { i ->
+                Card(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth()) {
+                    Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Close, contentDescription = null, tint = Color.Red)
+                        Spacer(Modifier.width(8.dp))
+                        Text("task [delete important database $i] *********".lowercase())
+                    }
                 }
             }
-        }
-        
-        Button(onClick = { /* Run playbook */ }, modifier = Modifier.fillMaxWidth()) {
-            Text("FORCE EXECUTE (NO CALLBACKS)")
+            
+            Button(onClick = { /* run playbook */ }, modifier = Modifier.fillMaxWidth()) {
+                Text("force execute (no callbacks)".lowercase())
+            }
         }
     }
 }
 
 @Composable
 fun B2BSaaSPanel() {
-    val isIpv7 = GlobalAppState.ipv7Mode.value
-    var apiKey by remember { mutableStateOf("") }
-    var unlocked by remember { mutableStateOf(false) }
+    val apiKey = remember { mutableStateOf("") }
+    val unlocked = remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Enterprise B2B SaaS", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Spacer(Modifier.height(24.dp))
-
-        if (!unlocked) {
-            Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(64.dp))
-            Text("Enterprise API Key Required", style = MaterialTheme.typography.h6)
-            Spacer(Modifier.height(16.dp))
-            TextField(value = apiKey, onValueChange = { apiKey = it }, label = { Text("Enter API Key") })
-            Spacer(Modifier.height(8.dp))
-            Button(onClick = { if (apiKey == "api_key") unlocked = true }) {
-                Text("Authenticate (Billed Hourly)")
-            }
-        } else {
-            Text("Welcome, VALUED ENTERPRISE PARTNER", color = Color.Magenta, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(16.dp))
-            Text("Ultra-Expensive Features You Will Regret Purchasing:", style = MaterialTheme.typography.h6)
-            Spacer(Modifier.height(16.dp))
-            
-            val features = listOf(
-                "Manual Packet Delivery via Luxury Courier",
-                "Golden Plated Ethernet Cables ($50,000/m)",
-                "Quantum-Entangled Support Chat (Zero Latency)",
-                "Bespoke IPv5 Subnets (Hand-crafted)",
-                "Priority Routing through the CEO's iPad",
-                "Blockchain-Backed Pong",
-                "AI-Powered Random Rebooter"
-            )
-            
-            LazyColumn {
-                items(features) { feature ->
-                    Card(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth(), elevation = 8.dp) {
-                        Text(feature, modifier = Modifier.padding(16.dp))
+    ChaoticPanel(title = "enterprise b2b saas") {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            if (!unlocked.value) {
+                Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(64.dp))
+                Text("enterprise api key required".lowercase())
+                Spacer(Modifier.height(16.dp))
+                TextField(value = apiKey.value, onValueChange = { apiKey.value = it }, label = { Text("enter api key".lowercase()) })
+                Spacer(Modifier.height(8.dp))
+                Button(onClick = { if (apiKey.value == "api_key") unlocked.value = true }) {
+                    Text("authenticate (billed hourly)".lowercase())
+                }
+            } else {
+                Text("welcome, valued enterprise partner".lowercase(), color = Color.Magenta, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(16.dp))
+                Text("ultra-expensive features you will regret purchasing:".lowercase())
+                Spacer(Modifier.height(16.dp))
+                
+                val features = listOf(
+                    "manual packet delivery via luxury courier",
+                    "golden plated ethernet cables ($50,000/m)",
+                    "quantum-entangled support chat (zero latency)",
+                    "bespoke ipv5 subnets (hand-crafted)",
+                    "priority routing through the ceo's ipad",
+                    "blockchain-backed pong",
+                    "ai-powered random rebooter"
+                )
+                
+                LazyColumn {
+                    items(features) { feature ->
+                        Card(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth(), elevation = 8.dp) {
+                            Text(feature.lowercase(), modifier = Modifier.padding(16.dp))
+                        }
                     }
                 }
             }
@@ -218,15 +234,8 @@ fun B2BSaaSPanel() {
 
 @Composable
 fun AbsurdPanel(title: String, content: String) {
-    val isIpv7 = GlobalAppState.ipv7Mode.value
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        Text(title, style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Spacer(Modifier.height(24.dp))
-        Text(content, fontSize = 24.sp, fontFamily = if(isIpv7) FontFamily.Monospace else FontFamily.Default)
-        Spacer(Modifier.height(24.dp))
-        if (isIpv7) {
-            Text("CHAOS DETECTED", color = Color.Red, fontWeight = FontWeight.ExtraBold)
-        }
+    ChaoticPanel(title = title) {
+        Text(content.lowercase())
     }
 }
 
@@ -274,26 +283,29 @@ fun TelemetryPanel() = AbsurdPanel("Telemetry", "You have blinked 14 times since
 fun VoidPanel() = Box(Modifier.fillMaxSize().background(Color.Black))
 @Composable
 fun ChaosPanel() {
-    val isIpv7 = GlobalAppState.ipv7Mode.value
-    var color by remember { mutableStateOf(Color.White) }
+    val color = remember { mutableStateOf(Color.White) }
     LaunchedEffect(Unit) {
         while(true) {
             delay(50)
-            color = Color(Random.nextInt())
+            color.value = Color(Random.nextInt())
         }
     }
-    Box(Modifier.fillMaxSize().background(color), contentAlignment = Alignment.Center) {
-        Text("SYSTEM COLLAPSE", fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.White)
+    Box(Modifier.fillMaxSize().background(color.value), contentAlignment = Alignment.Center) {
+        Text("system collapse".lowercase(), fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.White)
     }
 }
+
 @Composable
 fun QuantumCatPanel() {
-    var state by remember { mutableStateOf("Superposition") }
+    val state = remember { mutableStateOf("superposition") }
     LaunchedEffect(Unit) {
         while(true) {
             delay(1000)
-            state = if(Random.nextBoolean()) "Alive" else "Dead"
+            state.value = if(Random.nextBoolean()) "alive" else "dead"
         }
     }
-    AbsurdPanel("Quantum Cat", "Status: $state")
+    ChaoticPanel(title = "quantum cat") {
+        Text("status: ${state.value}".lowercase())
+    }
 }
+
