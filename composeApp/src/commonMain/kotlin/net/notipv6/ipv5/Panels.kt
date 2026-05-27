@@ -28,6 +28,7 @@ fun ChaoticPanel(
     val font = remember { GlobalAppState.getRandomFont() }
     val bgColor = remember { GlobalAppState.getRandomVibrantColor() }
     val textColor = remember { GlobalAppState.getRandomVibrantColor() }
+    val isIpv7 = GlobalAppState.ipv7Mode.value
 
     Column(
         modifier = Modifier.fillMaxSize().background(color = bgColor).padding(16.dp),
@@ -44,8 +45,10 @@ fun ChaoticPanel(
             content()
         }
         
-        Spacer(Modifier.height(24.dp))
-        Text("chaos active".lowercase(), color = textColor, fontWeight = FontWeight.ExtraBold, fontFamily = font)
+        if (isIpv7) {
+            Spacer(Modifier.height(24.dp))
+            Text("chaos active".lowercase(), color = textColor, fontWeight = FontWeight.ExtraBold, fontFamily = font)
+        }
     }
 }
 
