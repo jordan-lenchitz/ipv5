@@ -78,12 +78,13 @@ sealed class Screen(val route: String, val label: String, val icon: @Composable 
 fun App() {
     val navController = rememberNavController()
     val isIpv7 = GlobalAppState.ipv7Mode.value
+    val isAccessible = GlobalAppState.accessibilityMode.value
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     
-    val bgColor = remember { GlobalAppState.getRandomVibrantColor() }
-    val navColor = remember { GlobalAppState.getRandomVibrantColor() }
-    val textColor = remember { GlobalAppState.getRandomVibrantColor() }
+    val bgColor = if (isAccessible) Color.White else remember(GlobalAppState.ipv7Mode.value, isAccessible) { GlobalAppState.getRandomVibrantColor() }
+    val navColor = if (isAccessible) Color.LightGray else remember(GlobalAppState.ipv7Mode.value, isAccessible) { GlobalAppState.getRandomVibrantColor() }
+    val textColor = if (isAccessible) Color.Black else remember(GlobalAppState.ipv7Mode.value, isAccessible) { GlobalAppState.getRandomVibrantColor() }
 
     MaterialTheme(
         colors = MaterialTheme.colors.copy(
@@ -102,6 +103,11 @@ fun App() {
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
                             Icon(Icons.Default.Menu, contentDescription = "menu", tint = textColor)
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { GlobalAppState.accessibilityMode.value = !isAccessible }) {
+                            Icon(Icons.Default.Accessibility, contentDescription = "accessibility", tint = textColor)
                         }
                     },
                     backgroundColor = navColor

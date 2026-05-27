@@ -7,6 +7,7 @@ import kotlin.random.Random
 
 object GlobalAppState {
     var ipv7Mode = mutableStateOf(false)
+    var accessibilityMode = mutableStateOf(false)
     
     val fonts = listOf(
         FontFamily.Default,
