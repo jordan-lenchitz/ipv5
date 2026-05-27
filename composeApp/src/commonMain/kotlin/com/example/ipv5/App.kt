@@ -80,18 +80,27 @@ fun App() {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     
-    val bgColor = if (isIpv7) Color(0xFFFF00FF) else MaterialTheme.colors.background // Magenta in IPv7
-    val navColor = if (isIpv7) Color.Yellow else MaterialTheme.colors.surface
+    val bgColor = remember { GlobalAppState.getRandomVibrantColor() }
+    val navColor = remember { GlobalAppState.getRandomVibrantColor() }
+    val textColor = remember { GlobalAppState.getRandomVibrantColor() }
 
-    MaterialTheme {
+    MaterialTheme(
+        colors = MaterialTheme.colors.copy(
+            background = bgColor,
+            surface = navColor,
+            primary = textColor,
+            onBackground = textColor,
+            onSurface = textColor
+        )
+    ) {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
                 TopAppBar(
-                    title = { Text("IPv5 ${if(isIpv7) "CHAOS" else "Manager"}", fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default) },
+                    title = { Text("ipv5 ${if(isIpv7) "chaos" else "manager"}", color = textColor) },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                            Icon(Icons.Default.Menu, contentDescription = "menu", tint = textColor)
                         }
                     },
                     backgroundColor = navColor

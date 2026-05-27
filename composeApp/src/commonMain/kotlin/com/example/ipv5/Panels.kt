@@ -25,26 +25,27 @@ fun ChaoticPanel(
     title: String,
     content: @Composable () -> Unit
 ) {
-    val isIpv7 = GlobalAppState.ipv7Mode.value
-    val font = GlobalAppState.getRandomFont()
-    val bgColor = if (isIpv7) Color(Random.nextInt()) else Color.Transparent
+    val font = remember { GlobalAppState.getRandomFont() }
+    val bgColor = remember { GlobalAppState.getRandomVibrantColor() }
+    val textColor = remember { GlobalAppState.getRandomVibrantColor() }
 
     Column(
         modifier = Modifier.fillMaxSize().background(bgColor).padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(title.lowercase(), style = MaterialTheme.typography.h4, fontFamily = font)
+        Text(title.lowercase(), style = MaterialTheme.typography.h4, fontFamily = font, color = textColor)
         Spacer(Modifier.height(24.dp))
         
-        CompositionLocalProvider(LocalTextStyle provides LocalTextStyle.current.copy(fontFamily = font)) {
+        CompositionLocalProvider(
+            LocalTextStyle provides LocalTextStyle.current.copy(fontFamily = font, color = textColor),
+            LocalContentColor provides textColor
+        ) {
             content()
         }
         
         Spacer(Modifier.height(24.dp))
-        if (isIpv7) {
-            Text("chaos detected", color = Color.Red, fontWeight = FontWeight.ExtraBold, fontFamily = font)
-        }
+        Text("chaos active".lowercase(), color = textColor, fontWeight = FontWeight.ExtraBold, fontFamily = font)
     }
 }
 
@@ -62,20 +63,20 @@ fun DevOpsPanel() {
 
     ChaoticPanel(title = "devops panel") {
         Column {
-            Text("deploying to production on a friday...".lowercase(), color = Color.Red)
+            Text("deploying to production on a friday...".lowercase())
             Spacer(Modifier.height(24.dp))
             
             Text("build progress (in reverse): ${(progress.value * 100).toInt()}%".lowercase())
-            LinearProgressIndicator(progress = progress.value, modifier = Modifier.fillMaxWidth(), color = Color.Magenta)
+            LinearProgressIndicator(progress = progress.value, modifier = Modifier.fillMaxWidth())
             
             Spacer(Modifier.height(16.dp))
             Text("recent logs:".lowercase(), fontWeight = FontWeight.Bold)
-            Card(backgroundColor = Color.Black, modifier = Modifier.fillMaxWidth().height(200.dp)) {
+            Card(modifier = Modifier.fillMaxWidth().height(200.dp)) {
                 LazyColumn(modifier = Modifier.padding(8.dp)) {
-                    item { Text("error: production db deleted (whoops)".lowercase(), color = Color.Red, fontFamily = FontFamily.Monospace) }
-                    item { Text("info: bypassing unit tests for 'speed'".lowercase(), color = Color.Yellow, fontFamily = FontFamily.Monospace) }
-                    item { Text("debug: why is the server screaming?".lowercase(), color = Color.Green, fontFamily = FontFamily.Monospace) }
-                    item { Text("fatal: coffee machine offline".lowercase(), color = Color.Magenta, fontFamily = FontFamily.Monospace) }
+                    item { Text("error: production db deleted (whoops)".lowercase(), fontFamily = FontFamily.Monospace) }
+                    item { Text("info: bypassing unit tests for 'speed'".lowercase(), fontFamily = FontFamily.Monospace) }
+                    item { Text("debug: why is the server screaming?".lowercase(), fontFamily = FontFamily.Monospace) }
+                    item { Text("fatal: coffee machine offline".lowercase(), fontFamily = FontFamily.Monospace) }
                 }
             }
         }

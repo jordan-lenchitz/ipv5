@@ -13,5 +13,16 @@ object GlobalAppState {
         FontFamily.Serif
     )
     
+    val vibrantColors = listOf(
+        Color(0xFFFF00FF), // Magenta
+        Color(0xFF00FFFF), // Cyan
+        Color(0xFFFFFF00), // Yellow
+        Color(0xFFFF4500), // OrangeRed
+        Color(0xFF00FF00), // Lime
+        Color(0xFF7B68EE), // MediumSlateBlue
+        Color(0xFFFF1493)  // DeepPink
+    )
+    
     fun getRandomFont() = fonts.random()
+    fun getRandomVibrantColor() = vibrantColors.random()
 }
