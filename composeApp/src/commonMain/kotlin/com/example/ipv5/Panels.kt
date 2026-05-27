@@ -157,7 +157,7 @@ fun AnsiblePanel() {
         repeat(5) { i ->
             Card(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth()) {
                 Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Close, contentDescription = null, color = Color.Red)
+                    Icon(Icons.Default.Close, contentDescription = null, tint = Color.Red)
                     Spacer(Modifier.width(8.dp))
                     Text("TASK [Delete important database $i] *********")
                 }
