@@ -38,12 +38,12 @@ kotlin {
 
 android {
     namespace = "net.notipv6.ipv5"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "net.notipv6.ipv5"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }
