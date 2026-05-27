@@ -1,13 +1,7 @@
-ipv5
+`ipv5` is an app that does some sweet silly stuff please check it out 
 
-this is a networking app that does cool stuff with ipv5 and quantum entanglement and it routes through the moon
+manual install on android 13+ 
 
-how to build
+step zero enable usb debugging
 
-make sure you have jdk 17 or 21 and then run
-
-./gradlew clean :composeApp:bundleRelease
-
-the aab file is in composeapp/build/outputs/bundle/release/composeapp-release.aab
-
-enjoy the chaos
+step one git clone this repository then run `./gradlew installdebug` and please enjoy the chaos
