@@ -107,7 +107,7 @@ fun App() {
                 )
             },
             drawerContent = {
-                Column(modifier = Modifier.fillMaxSize().background(bgColor)) {
+                Column(modifier = Modifier.fillMaxSize().background(color = bgColor)) {
                     Text(
                         "systems and as operations", 
                         modifier = Modifier.padding(16.dp), 
@@ -171,8 +171,7 @@ fun App() {
                 }
             }
         ) { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding).fillMaxSize().background(bgColor)) {
-                NavHost(navController, startDestination = Screen.Dashboard.route) {
+            Box(modifier = Modifier.padding(innerPadding).fillMaxSize().background(color = bgColor)) {                NavHost(navController, startDestination = Screen.Dashboard.route) {
                     composable(Screen.Dashboard.route) { DashboardScreen() }
                     composable(Screen.Security.route) { SecurityScreen() }
                     composable(Screen.Predictor.route) { PredictorScreen() }
@@ -338,7 +337,7 @@ fun SecurityScreen() {
         TextField(value = mac, onValueChange = { mac = it }, label = { Text("Device MAC Address") })
         Spacer(Modifier.height(8.dp))
         
-        Box(modifier = if(tinFoilMode) Modifier.background(Color.LightGray).padding(8.dp) else Modifier) {
+        Box(modifier = if(tinFoilMode) Modifier.background(color = Color.LightGray).padding(8.dp) else Modifier) {
             Text("Base IPv5: ${ipv5}", fontFamily = fontFamily)
         }
         
@@ -357,7 +356,7 @@ fun SecurityScreen() {
         if (entangled.isNotEmpty()) {
             Spacer(Modifier.height(16.dp))
             Text("Entangled IPv5 Address:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
-            Text(entangled, color = if(isIpv7) Color.White else Color.Magenta, style = MaterialTheme.typography.h5, fontFamily = fontFamily, modifier = Modifier.background(if(isIpv7) Color.Black else Color.Transparent))
+            Text(entangled, color = if(isIpv7) Color.White else Color.Magenta, style = MaterialTheme.typography.h5, fontFamily = fontFamily, modifier = Modifier.background(color = if(isIpv7) Color.Black else Color.Transparent))
         }
         
         Spacer(Modifier.height(32.dp))

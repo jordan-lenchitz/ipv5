@@ -30,7 +30,7 @@ fun ChaoticPanel(
     val textColor = remember { GlobalAppState.getRandomVibrantColor() }
 
     Column(
-        modifier = Modifier.fillMaxSize().background(bgColor).padding(16.dp),
+        modifier = Modifier.fillMaxSize().background(color = bgColor).padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -146,19 +146,19 @@ fun GrafanaPanel() {
     ChaoticPanel(title = "grafana dashboard") {
         Column {
             Text("metric: customer satisfaction".lowercase())
-            Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Red)) {
+            Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(color = Color.Red)) {
                 Text("📉", modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
             }
             
             Spacer(Modifier.height(16.dp))
             Text("metric: ceo bonus".lowercase())
-            Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Green)) {
+            Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(color = Color.Green)) {
                 Text("📈", modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
             }
             
             Spacer(Modifier.height(16.dp))
             Text("metric: router temperature".lowercase())
-            Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(Color.Black)) {
+            Box(modifier = Modifier.fillMaxWidth().height(100.dp).background(color = Color.Black)) {
                 Text("🔥", modifier = Modifier.align(Alignment.Center), fontSize = 48.sp)
             }
         }
@@ -281,7 +281,7 @@ fun ApiDocsPanel() = AbsurdPanel("API Docs", "Endpoint '/' returns 418 I'm a tea
 @Composable
 fun TelemetryPanel() = AbsurdPanel("Telemetry", "You have blinked 14 times since opening this app.")
 @Composable
-fun VoidPanel() = Box(Modifier.fillMaxSize().background(Color.Black))
+fun VoidPanel() = Box(Modifier.fillMaxSize().background(color = Color.Black))
 @Composable
 fun ChaosPanel() {
     val color = remember { mutableStateOf(Color.White) }
@@ -291,7 +291,7 @@ fun ChaosPanel() {
             color.value = Color(Random.nextInt())
         }
     }
-    Box(Modifier.fillMaxSize().background(color.value), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().background(color = color.value), contentAlignment = Alignment.Center) {
         Text("system collapse".lowercase(), fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.White)
     }
 }
