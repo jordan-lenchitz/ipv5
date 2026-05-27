@@ -8,7 +8,7 @@ plugins {
 kotlin {
     androidTarget {
         compilations.all {
-            compilerOptions {
+            compilerOptions.configure {
                 jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
             }
         }
