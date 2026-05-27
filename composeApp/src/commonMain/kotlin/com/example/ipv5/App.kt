@@ -40,8 +40,37 @@ sealed class Screen(val route: String, val label: String, val icon: @Composable 
     // New Drawer Screens
     object About : Screen("about", "About", { Icon(Icons.Default.Info, null) })
     object Settings : Screen("settings", "Settings", { Icon(Icons.Default.Settings, null) })
-    object Admin : Screen("admin", "Admin Panel", { Icon(Icons.Default.Lock, null) }) // Reusing Lock icon or Build
+    object Admin : Screen("admin", "Admin Panel", { Icon(Icons.Default.Lock, null) })
     object Dev : Screen("dev", "Dev Panel", { Icon(Icons.Default.Build, null) })
+    object DevOps : Screen("devops", "DevOps Panel", { Icon(Icons.Default.Refresh, null) })
+    object FinOps : Screen("finops", "FinOps Panel", { Icon(Icons.Default.ShoppingCart, null) })
+    object Splunk : Screen("splunk", "Splunk Panel", { Icon(Icons.Default.Search, null) })
+    object Grafana : Screen("grafana", "Grafana Panel", { Icon(Icons.Default.List, null) })
+    object Ansible : Screen("ansible", "Ansible Panel", { Icon(Icons.Default.Check, null) })
+    object B2BSaaS : Screen("b2bsaas", "B2B SaaS Panel", { Icon(Icons.Default.Star, null) })
+    object Chaos : Screen("chaos", "Chaos Panel", { Icon(Icons.Default.Warning, null) })
+    object Pizza : Screen("pizza", "Pizza Tracker", { Icon(Icons.Default.ShoppingCart, null) })
+    object HR : Screen("hr", "HR Portal", { Icon(Icons.Default.Person, null) })
+    object Lawyer : Screen("lawyer", "Legal Dept", { Icon(Icons.Default.Info, null) })
+    object Marketing : Screen("marketing", "Marketing", { Icon(Icons.Default.Email, null) })
+    object Coffee : Screen("coffee", "Coffee Status", { Icon(Icons.Default.Favorite, null) })
+    object Weather : Screen("weather", "Mars Weather", { Icon(Icons.Default.LocationOn, null) })
+    object Stock : Screen("stock", "Stock Market", { Icon(Icons.Default.Notifications, null) })
+    object Astrology : Screen("astrology", "Astrology Routing", { Icon(Icons.Default.Star, null) })
+    object History : Screen("history", "History", { Icon(Icons.Default.AccountBox, null) })
+    object Secret : Screen("secret", "Secret Panel", { Icon(Icons.Default.Lock, null) })
+    object BugTracker : Screen("bugtracker", "Bug Tracker", { Icon(Icons.Default.Warning, null) })
+    object Support : Screen("support", "Support", { Icon(Icons.Default.Call, null) })
+    object Compliance : Screen("compliance", "Compliance", { Icon(Icons.Default.Check, null) })
+    object Doc : Screen("doc", "Documentation", { Icon(Icons.Default.Menu, null) })
+    object Feedback : Screen("feedback", "Feedback", { Icon(Icons.Default.Send, null) })
+    object Sales : Screen("sales", "Sales", { Icon(Icons.Default.ShoppingCart, null) })
+    object Infra : Screen("infra", "Infrastructure", { Icon(Icons.Default.Build, null) })
+    object Database : Screen("database", "Database", { Icon(Icons.Default.List, null) })
+    object ApiDocs : Screen("apidocs", "API Docs", { Icon(Icons.Default.MoreVert, null) })
+    object Telemetry : Screen("telemetry", "Telemetry", { Icon(Icons.Default.Info, null) })
+    object Void : Screen("void", "The Void", { Icon(Icons.Default.Clear, null) })
+    object QuantumCat : Screen("quantumcat", "Quantum Cat", { Icon(Icons.Default.Face, null) })
 }
 
 @Composable
@@ -71,30 +100,42 @@ fun App() {
             drawerContent = {
                 Column(modifier = Modifier.fillMaxSize().background(bgColor)) {
                     Text(
-                        "System Operations", 
+                        "systems and as operations", 
                         modifier = Modifier.padding(16.dp), 
                         style = MaterialTheme.typography.h6,
                         fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default
                     )
                     Divider()
-                    val drawerScreens = listOf(Screen.About, Screen.Settings, Screen.Admin, Screen.Dev)
-                    drawerScreens.forEach { screen ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    navController.navigate(screen.route) {
-                                        popUpTo(navController.graph.startDestinationId)
-                                        launchSingleTop = true
+                    val drawerScreens = listOf(
+                        Screen.About, Screen.Settings, Screen.Admin, Screen.Dev,
+                        Screen.DevOps, Screen.FinOps, Screen.Splunk, Screen.Grafana,
+                        Screen.Ansible, Screen.B2BSaaS, Screen.Chaos, Screen.Pizza,
+                        Screen.HR, Screen.Lawyer, Screen.Marketing, Screen.Coffee,
+                        Screen.Weather, Screen.Stock, Screen.Astrology, Screen.History,
+                        Screen.Secret, Screen.BugTracker, Screen.Support, Screen.Compliance,
+                        Screen.Doc, Screen.Feedback, Screen.Sales, Screen.Infra,
+                        Screen.Database, Screen.ApiDocs, Screen.Telemetry, Screen.Void,
+                        Screen.QuantumCat
+                    )
+                    LazyColumn {
+                        items(drawerScreens) { screen ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        navController.navigate(screen.route) {
+                                            popUpTo(navController.graph.startDestinationId)
+                                            launchSingleTop = true
+                                        }
+                                        scope.launch { scaffoldState.drawerState.close() }
                                     }
-                                    scope.launch { scaffoldState.drawerState.close() }
-                                }
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            screen.icon()
-                            Spacer(Modifier.width(32.dp))
-                            Text(screen.label, fontFamily = if(isIpv7) FontFamily.Monospace else FontFamily.Default)
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                screen.icon()
+                                Spacer(Modifier.width(32.dp))
+                                Text(screen.label, fontFamily = if(isIpv7) FontFamily.Monospace else FontFamily.Default)
+                            }
                         }
                     }
                 }
@@ -135,6 +176,36 @@ fun App() {
                     composable(Screen.Settings.route) { SettingsScreen() }
                     composable(Screen.Admin.route) { AdminScreen() }
                     composable(Screen.Dev.route) { DevScreen() }
+                    
+                    composable(Screen.DevOps.route) { DevOpsPanel() }
+                    composable(Screen.FinOps.route) { FinOpsPanel() }
+                    composable(Screen.Splunk.route) { SplunkPanel() }
+                    composable(Screen.Grafana.route) { GrafanaPanel() }
+                    composable(Screen.Ansible.route) { AnsiblePanel() }
+                    composable(Screen.B2BSaaS.route) { B2BSaaSPanel() }
+                    composable(Screen.Chaos.route) { ChaosPanel() }
+                    composable(Screen.Pizza.route) { PizzaTrackerPanel() }
+                    composable(Screen.HR.route) { HRPanel() }
+                    composable(Screen.Lawyer.route) { LawyerPanel() }
+                    composable(Screen.Marketing.route) { MarketingPanel() }
+                    composable(Screen.Coffee.route) { CoffeePanel() }
+                    composable(Screen.Weather.route) { WeatherPanel() }
+                    composable(Screen.Stock.route) { StockPanel() }
+                    composable(Screen.Astrology.route) { AstrologyPanel() }
+                    composable(Screen.History.route) { HistoryPanel() }
+                    composable(Screen.Secret.route) { SecretPanel() }
+                    composable(Screen.BugTracker.route) { BugTrackerPanel() }
+                    composable(Screen.Support.route) { SupportPanel() }
+                    composable(Screen.Compliance.route) { CompliancePanel() }
+                    composable(Screen.Doc.route) { DocPanel() }
+                    composable(Screen.Feedback.route) { FeedbackPanel() }
+                    composable(Screen.Sales.route) { SalesPanel() }
+                    composable(Screen.Infra.route) { InfraPanel() }
+                    composable(Screen.Database.route) { DatabasePanel() }
+                    composable(Screen.ApiDocs.route) { ApiDocsPanel() }
+                    composable(Screen.Telemetry.route) { TelemetryPanel() }
+                    composable(Screen.Void.route) { VoidPanel() }
+                    composable(Screen.QuantumCat.route) { QuantumCatPanel() }
                 }
             }
         }
