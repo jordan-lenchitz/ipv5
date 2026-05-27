@@ -1,0 +1,9 @@
+privacy policy
+
+this app does not collect personal information
+
+the only data we touch is your device's ip address which is used purely for the networking features within the app
+
+we do not store or share this ip address with any third parties
+
+if you have any concerns please contact the chaos foundation
