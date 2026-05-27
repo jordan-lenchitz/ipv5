@@ -37,11 +37,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.example.ipv5"
+    namespace = "net.notipv6.ipv5"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.ipv5"
+        applicationId = "net.notipv6.ipv5"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -73,6 +73,6 @@ android {
 
 compose.resources {
     publicResClass = true
-    packageOfResClass = "com.example.ipv5"
+    packageOfResClass = "net.notipv6.ipv5"
     generateResClass = auto
 }
