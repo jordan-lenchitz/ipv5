@@ -11,7 +11,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.*
-import androidx.compose.material.icons.filled.Accessibility
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -107,8 +106,8 @@ fun App() {
                         }
                     },
                     actions = {
-                        IconButton(onClick = { GlobalAppState.accessibilityMode.value = !isAccessible }) {
-                            Icon(Icons.Default.Accessibility, contentDescription = "accessibility", tint = textColor)
+                        TextButton(onClick = { GlobalAppState.accessibilityMode.value = !isAccessible }) {
+                            Text("accessible", color = textColor)
                         }
                     },
                     backgroundColor = navColor
