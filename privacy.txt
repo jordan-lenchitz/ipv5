@@ -1,9 +1,7 @@
-privacy policy
+ipv5 does not collect your personal information
 
-this app does not collect personal information
+the only data we touch is your android's emitted ip address
 
-the only data we touch is your device's ip address which is used purely for the networking features within the app
+this is used purely for the features of the app, we do not store or share it with anyone
 
-we do not store or share this ip address with any third parties
-
-if you have any concerns please contact the chaos foundation
+if you have any concerns please smtp to sudo at jordanlenchitz dot org
