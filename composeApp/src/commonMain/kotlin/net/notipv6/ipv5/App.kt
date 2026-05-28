@@ -37,8 +37,6 @@ sealed class Screen(val route: String, val label: String, val icon: @Composable 
     object DNS : Screen("dns", "dns", { Icon(Icons.Default.Search, null) })
     object IPv7 : Screen("ipv7", "ipv7+", { Icon(Icons.Default.Star, null) })
     object More : Screen("more", "more (36)", { Icon(Icons.AutoMirrored.Filled.List, null) })
-    
-    // New Drawer Screens
     object About : Screen("about", "about", { Icon(Icons.Default.Info, null) })
     object Settings : Screen("settings", "settings", { Icon(Icons.Default.Settings, null) })
     object Admin : Screen("admin", "admin panel", { Icon(Icons.Default.Lock, null) })
