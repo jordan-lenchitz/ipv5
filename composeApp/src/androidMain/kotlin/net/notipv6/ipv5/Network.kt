@@ -10,7 +10,6 @@ actual suspend fun fetchIp(v6: Boolean): String = withContext(Dispatchers.IO) {
         val url = if (v6) "https://api64.ipify.org" else "https://api.ipify.org"
         val ip = URL(url).readText()
         if (v6 && !ip.contains(":")) {
-            // Fake IPv6 from IPv4!
             val parts = ip.split(".")
             if (parts.size == 4) {
                 val hexParts = parts.map { it.toIntOrNull()?.toString(16)?.padStart(2, '0') ?: "00" }
