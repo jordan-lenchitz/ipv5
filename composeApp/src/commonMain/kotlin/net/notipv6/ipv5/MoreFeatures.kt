@@ -2,9 +2,6 @@ package net.notipv6.ipv5
 
 import kotlin.random.Random
 
-/**
- * Quantity over quality. Here are the 36 premium features.
- */
 object MoreFeatures {
     fun dnsRoulette(domain: String) = listOf("myspace.com", "geocities.com", "altavista.digital.com").random()
     fun quantumPacketLoss(packet: String) = if (Random.nextBoolean()) null else packet
