@@ -7,5 +7,5 @@
 - enable usb debugging on your android 13+ device
 - plug in your android 13+ device to your CLI
 - git clone this repository
-- `./gradlew installdebug` 
+- `cd ipv5` then `./gradlew installdebug` 
 - enjoy the chaos
