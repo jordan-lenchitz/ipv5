@@ -1,7 +1,3 @@
-ipv5 does not collect your personal information
-
-the only data we touch is your android's emitted ip address which is not saved
-
-this is used purely for the features of the app and we do not store nor share it with anyone
+ipv5 collects no personal information because we only ever grab your android's emitted ip address which is not saved when you close the app. this is used purely for the features of the app and we do not store nor share it with anyone.
 
 if you have any concerns please smtp to sudo at jordanlenchitz dot org
