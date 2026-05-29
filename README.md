@@ -1,4 +1,4 @@
-`ipv5` is an android-only app that does some sweet silly stuff please check it out!
+`ipv5` is an app (not for iOS) that does some sweet silly stuff please check it out!
 
 # google play install (signed sdk from the aab)
 `https://play.google.com/store/apps/details?id=net.notipv6.ipv5`
