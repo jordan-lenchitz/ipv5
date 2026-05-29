@@ -70,6 +70,7 @@ sealed class Screen(val route: String, val label: String, val icon: @Composable 
     object Telemetry : Screen("telemetry", "telemetry", { Icon(Icons.Default.Info, null) })
     object Void : Screen("void", "the void", { Icon(Icons.Default.Clear, null) })
     object QuantumCat : Screen("quantumcat", "quantum cat", { Icon(Icons.Default.Face, null) })
+    object WordSearch : Screen("wordsearch", "word search", { Icon(Icons.Default.Search, null) })
 }
 
 @Composable
@@ -129,7 +130,7 @@ fun App() {
                         Screen.Secret, Screen.BugTracker, Screen.Support, Screen.Compliance,
                         Screen.Doc, Screen.Feedback, Screen.Sales, Screen.Infra,
                         Screen.Database, Screen.ApiDocs, Screen.Telemetry, Screen.Void,
-                        Screen.QuantumCat
+                        Screen.QuantumCat, Screen.WordSearch
                     )
                     LazyColumn {
                         items(drawerScreens) { screen ->
@@ -169,7 +170,7 @@ fun App() {
                                 navController.navigate(screen.route) {
                                     popUpTo(navController.graph.startDestinationId)
                                     launchSingleTop = true
-                                }
+                                 }
                             }
                         )
                     }
@@ -219,6 +220,7 @@ fun App() {
                     composable(Screen.Telemetry.route) { TelemetryPanel() }
                     composable(Screen.Void.route) { VoidPanel() }
                     composable(Screen.QuantumCat.route) { QuantumCatPanel() }
+                    composable(Screen.WordSearch.route) { WordSearchPanel() }
                 }
             }
         }
