@@ -8,6 +8,7 @@ targets:
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: net.notipv6.ipv5
       DEVELOPMENT_TEAM: "USV5Y46UH8"
+      INFOPLIST_KEY_CFBundleDisplayName: ipv5
     preBuildScripts:
       - script: |
           cd "$SRCROOT/.."
