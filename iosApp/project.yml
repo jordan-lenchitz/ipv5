@@ -7,7 +7,7 @@ targets:
     sources: [iosApp]
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: net.notipv6.ipv5
-      DEVELOPMENT_TEAM: "" # Set your team ID here if running on a real device
+      DEVELOPMENT_TEAM: "USV5Y46UH8"
     preBuildScripts:
       - script: |
           cd "$SRCROOT/.."
