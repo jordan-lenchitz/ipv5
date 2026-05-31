@@ -495,7 +495,12 @@ fun DashboardScreen() {
         val signs = listOf("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces")
         var expanded by remember { mutableStateOf(false) }
         Box {
-            Button(onClick = { expanded = true }) { Text(selectedSign) }
+            Button(
+                onClick = { expanded = true },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
+            ) { 
+                Text(selectedSign, color = Color.White) 
+            }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 signs.forEach { sign ->
                     DropdownMenuItem(onClick = { 
@@ -543,15 +548,18 @@ fun SecurityScreen() {
         }
         
         Spacer(Modifier.height(16.dp))
-        Button(onClick = { 
-            val mathResult = IPv5Utilities.evaluateSimpleMath(mac)
-            if (mathResult != null) {
-                entangled = "00:00:00:00:00:" + mathResult.toString(16).uppercase().padStart(2, '0')
-            } else {
-                entangled = IPv5Utilities.entangleMac(ipv5, mac) 
-            }
-        }) {
-            Text("Entangle Security", fontFamily = fontFamily)
+        Button(
+            onClick = { 
+                val mathResult = IPv5Utilities.evaluateSimpleMath(mac)
+                if (mathResult != null) {
+                    entangled = "00:00:00:00:00:" + mathResult.toString(16).uppercase().padStart(2, '0')
+                } else {
+                    entangled = IPv5Utilities.entangleMac(ipv5, mac) 
+                }
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
+        ) {
+            Text("Entangle Security", fontFamily = fontFamily, color = Color.White)
         }
         
         if (entangled.isNotEmpty()) {
@@ -564,19 +572,25 @@ fun SecurityScreen() {
         Divider()
         Text("Experimental Security", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
         
-        Button(onClick = { culinaryMac = IPv5Utilities.scrambleMacCulinary(mac) }) {
-            Text("Hash MAC with Chicken Noodle Soup", fontFamily = fontFamily)
+        Button(
+            onClick = { culinaryMac = IPv5Utilities.scrambleMacCulinary(mac) },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50))
+        ) {
+            Text("Hash MAC with Chicken Noodle Soup", fontFamily = fontFamily, color = Color.White)
         }
         if (culinaryMac.isNotEmpty()) {
             Text("Culinary Hash: $culinaryMac", color = Color(0xFF4CAF50), fontFamily = fontFamily)
         }
         
         Spacer(Modifier.height(16.dp))
-        Button(onClick = { 
-            bluetoothStatus = "Translating Bluetooth signals to IPv5..."
-            // Mock delay logic could go here
-        }) {
-            Text("Translate Bluetooth to IPv5 Node", fontFamily = fontFamily)
+        Button(
+            onClick = { 
+                bluetoothStatus = "Translating Bluetooth signals to IPv5..."
+                // Mock delay logic could go here
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF2196F3))
+        ) {
+            Text("Translate Bluetooth to IPv5 Node", fontFamily = fontFamily, color = Color.White)
         }
         Text("Bluetooth Status: $bluetoothStatus", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
     }
@@ -609,8 +623,11 @@ fun PredictorScreen() {
         Text("Simulated Battery: ${battery}%", fontFamily = fontFamily)
         Slider(value = battery.toFloat(), onValueChange = { battery = it.toInt() }, valueRange = 0f..100f)
         Spacer(Modifier.height(16.dp))
-        Button(onClick = { port = IPv5Utilities.predictPort(battery) }) {
-            Text("Predict Active Port", fontFamily = fontFamily)
+        Button(
+            onClick = { port = IPv5Utilities.predictPort(battery) },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
+        ) {
+            Text("Predict Active Port", fontFamily = fontFamily, color = Color.White)
         }
         if (port != 0) {
             Text("Suggested Port: $port", style = MaterialTheme.typography.h5, color = if(isAccessible) Color.Black else if(isIpv7) Color.Red else Color(0xFF4CAF50), fontFamily = fontFamily)
@@ -620,8 +637,11 @@ fun PredictorScreen() {
         Divider()
         Text("Esoteric Port Methods", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
         
-        Button(onClick = { teaReading = IPv5Utilities.getTeaLeafReading() }) {
-            Text("Divinate Port via Tea Leaves", fontFamily = fontFamily)
+        Button(
+            onClick = { teaReading = IPv5Utilities.getTeaLeafReading() },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF795548))
+        ) {
+            Text("Divinate Port via Tea Leaves", fontFamily = fontFamily, color = Color.White)
         }
         if (teaReading.isNotEmpty()) {
             Text("The Leaves say: $teaReading", color = Color(0xFF795548), fontFamily = fontFamily)
@@ -630,14 +650,17 @@ fun PredictorScreen() {
         
         Spacer(Modifier.height(16.dp))
         Text("Quantum Tunneling Port: ${if (tunnelingPort == 0) "---" else tunnelingPort}", style = MaterialTheme.typography.h5, fontFamily = fontFamily)
-        Button(onClick = { 
-            if (isTunneling) {
-                isTunneling = false
-            } else {
-                isTunneling = true
-            }
-        }) {
-            Text(if (isTunneling) "Collapse Wavefunction" else "Begin Quantum Tunneling", fontFamily = fontFamily)
+        Button(
+            onClick = { 
+                if (isTunneling) {
+                    isTunneling = false
+                } else {
+                    isTunneling = true
+                }
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF9C27B0))
+        ) {
+            Text(if (isTunneling) "Collapse Wavefunction" else "Begin Quantum Tunneling", fontFamily = fontFamily, color = Color.White)
         }
     }
 }
@@ -668,35 +691,39 @@ fun PingScreen() {
         }
         
         TextField(value = host, onValueChange = { host = it }, label = { Text("Target Host") }, modifier = Modifier.fillMaxWidth())
-        Button(onClick = {
-            scope.launch {
-                pinging = true
-                results.clear()
-                realLatencies.clear()
-                val modePrefix = if(paranormalMode) "[GHOST] " else if(pigeonMode) "[BIRD] " else ""
-                results.add(0, "${modePrefix}Pinging $host via Boomerang Route...")
-                repeat(4) {
-                    val realLatency = pingHost(host)
-                    delay(if(isIpv7) 100 else 1000)
-                    
-                    if (paranormalMode) {
-                        results.add(0, "Reply from The Beyond: latency=${IPv5Utilities.getParanormalLatency()}")
-                        realLatencies.add(0, realLatency)
-                    } else if (pigeonMode) {
-                        results.add(0, "Pigeon at ${Random.nextInt(10, 50)}km/h. Wind resistance: HIGH. Reply in ${Random.nextInt(5, 30)}s")
-                        realLatencies.add(0, realLatency)
-                    } else if (realLatency != null) {
-                        results.add(0, "Reply from $host: bytes=40 time=${realLatency * 10000}ms TTL=1")
-                        realLatencies.add(0, realLatency)
-                    } else {
-                        results.add(0, "Request timed out: The Moon is currently blocked by a cloud.")
-                        realLatencies.add(0, null)
+        Button(
+            onClick = {
+                scope.launch {
+                    pinging = true
+                    results.clear()
+                    realLatencies.clear()
+                    val modePrefix = if(paranormalMode) "[GHOST] " else if(pigeonMode) "[BIRD] " else ""
+                    results.add(0, "${modePrefix}Pinging $host via Boomerang Route...")
+                    repeat(4) {
+                        val realLatency = pingHost(host)
+                        delay(if(isIpv7) 100 else 1000)
+                        
+                        if (paranormalMode) {
+                            results.add(0, "Reply from The Beyond: latency=${IPv5Utilities.getParanormalLatency()}")
+                            realLatencies.add(0, realLatency)
+                        } else if (pigeonMode) {
+                            results.add(0, "Pigeon at ${Random.nextInt(10, 50)}km/h. Wind resistance: HIGH. Reply in ${Random.nextInt(5, 30)}s")
+                            realLatencies.add(0, realLatency)
+                        } else if (realLatency != null) {
+                            results.add(0, "Reply from $host: bytes=40 time=${realLatency * 10000}ms TTL=1")
+                            realLatencies.add(0, realLatency)
+                        } else {
+                            results.add(0, "Request timed out: The Moon is currently blocked by a cloud.")
+                            realLatencies.add(0, null)
+                        }
                     }
+                    pinging = false
                 }
-                pinging = false
-            }
-        }, enabled = !pinging) {
-            Text(if (pinging) "Pinging..." else "Start Boomerang Ping", fontFamily = fontFamily)
+            }, 
+            enabled = !pinging,
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFE91E63))
+        ) {
+            Text(if (pinging) "Pinging..." else "Start Boomerang Ping", fontFamily = fontFamily, color = Color.White)
         }
         
         Spacer(Modifier.height(16.dp))
@@ -744,38 +771,42 @@ fun DnsScreen() {
         }
         
         TextField(value = url, onValueChange = { url = it }, label = { Text("URL to resolve") }, modifier = Modifier.fillMaxWidth())
-        Button(onClick = {
-            scope.launch {
-                resolving = true
-                logs.clear()
-                val realIp = resolveDns(url)
-                val steps = if(ancestralMode) {
-                    listOf("Connecting to 56k Modem...", "Bypassing Under Construction signs...", "Searching the Yahoo! Directory...", "Ancestral site located!")
-                } else {
-                    listOf("Contacting root servers...", "Reticulating splines...", "Consulting the Oracle...", "Waiting for carrier pigeon...", "IPv5 found!")
+        Button(
+            onClick = {
+                scope.launch {
+                    resolving = true
+                    logs.clear()
+                    val realIp = resolveDns(url)
+                    val steps = if(ancestralMode) {
+                        listOf("Connecting to 56k Modem...", "Bypassing Under Construction signs...", "Searching the Yahoo! Directory...", "Ancestral site located!")
+                    } else {
+                        listOf("Contacting root servers...", "Reticulating splines...", "Consulting the Oracle...", "Waiting for carrier pigeon...", "IPv5 found!")
+                    }
+                    
+                    for (step in steps) {
+                        logs.add(if(emojiDnsMode) "🛠️ ${step}" else step)
+                        delay(if(isIpv7) Random.nextLong(10, 100) else Random.nextLong(1000, 3000))
+                    }
+                    
+                    if (emojiDnsMode) {
+                        logs.add("Resolution Result: ${IPv5Utilities.getEmojiDns(url)}")
+                    } else if (ancestralMode) {
+                        logs.add("Ancestral URL: www.geocities.com/SiliconValley/Hacker/${url.split(".")[0]}/index.html")
+                    } else if (realIp != null) {
+                        val antiIp = realIp.split(".").reversed().joinToString(".")
+                        val hexMac = realIp.split(".").map { it.toIntOrNull()?.toString(16)?.uppercase()?.padStart(2, '0') ?: "00" }.joinToString(":")
+                        logs.add("Resolved Anti-IP: $antiIp")
+                        logs.add("Discovered MAC Address: $hexMac")
+                    } else {
+                        logs.add("Resolution failed: Carrier pigeon lost at sea.")
+                    }
+                    resolving = false
                 }
-                
-                for (step in steps) {
-                    logs.add(if(emojiDnsMode) "🛠️ ${step}" else step)
-                    delay(if(isIpv7) Random.nextLong(10, 100) else Random.nextLong(1000, 3000))
-                }
-                
-                if (emojiDnsMode) {
-                    logs.add("Resolution Result: ${IPv5Utilities.getEmojiDns(url)}")
-                } else if (ancestralMode) {
-                    logs.add("Ancestral URL: www.geocities.com/SiliconValley/Hacker/${url.split(".")[0]}/index.html")
-                } else if (realIp != null) {
-                    val antiIp = realIp.split(".").reversed().joinToString(".")
-                    val hexMac = realIp.split(".").map { it.toIntOrNull()?.toString(16)?.uppercase()?.padStart(2, '0') ?: "00" }.joinToString(":")
-                    logs.add("Resolved Anti-IP: $antiIp")
-                    logs.add("Discovered MAC Address: $hexMac")
-                } else {
-                    logs.add("Resolution failed: Carrier pigeon lost at sea.")
-                }
-                resolving = false
-            }
-        }, enabled = !resolving) {
-            Text(if (resolving) "Resolving..." else "Resolve URL", fontFamily = fontFamily)
+            }, 
+            enabled = !resolving,
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF9800))
+        ) {
+            Text(if (resolving) "Resolving..." else "Resolve URL", fontFamily = fontFamily, color = Color.White)
         }
         
         Spacer(Modifier.height(16.dp))
@@ -967,12 +998,15 @@ fun AdminScreen() {
         LinearProgressIndicator(progress = load, modifier = Modifier.fillMaxWidth(), color = Color.Red)
         Spacer(Modifier.height(16.dp))
         
-        Button(onClick = { 
-            ramStatus = "Downloading..."
-            load = 0.42f
-            ramStatus = "RAM Downloaded (Capacity: ∞)"
-        }) {
-            Text("Download More RAM for Router")
+        Button(
+            onClick = { 
+                ramStatus = "Downloading..."
+                load = 0.42f
+                ramStatus = "RAM Downloaded (Capacity: ∞)"
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF2196F3))
+        ) {
+            Text("Download More RAM for Router", color = Color.White)
         }
         Text("RAM Status: $ramStatus", fontFamily = FontFamily.Monospace)
         
@@ -982,7 +1016,11 @@ fun AdminScreen() {
         Text("Mainframe Status: VIBRATING", style = MaterialTheme.typography.body1)
         
         Spacer(Modifier.weight(1f))
-        Button(onClick = { /* Do nothing */ }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(backgroundColor = Color.Black)) {
+        Button(
+            onClick = { /* Do nothing */ }, 
+            modifier = Modifier.fillMaxWidth(), 
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Black)
+        ) {
             Text("SELF-DESTRUCT (MOCK)", color = Color.White)
         }
     }
@@ -998,16 +1036,28 @@ fun DevScreen() {
         Text("Dev Tools", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
         Spacer(Modifier.height(24.dp))
         
-        Button(onClick = { /* Force crash logic */ }, modifier = Modifier.fillMaxWidth()) {
-            Text("Force NullPointerException")
+        Button(
+            onClick = { /* Force crash logic */ }, 
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+        ) {
+            Text("Force NullPointerException", color = Color.White)
         }
         Spacer(Modifier.height(8.dp))
-        Button(onClick = { /* Clear cache */ }, modifier = Modifier.fillMaxWidth()) {
-            Text("Vaporize Local Cache")
+        Button(
+            onClick = { /* Clear cache */ }, 
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF673AB7))
+        ) {
+            Text("Vaporize Local Cache", color = Color.White)
         }
         Spacer(Modifier.height(8.dp))
-        Button(onClick = { /* Simulate drop */ }, modifier = Modifier.fillMaxWidth()) {
-            Text("Simulate Solar Flare Interference")
+        Button(
+            onClick = { /* Simulate drop */ }, 
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF5722))
+        ) {
+            Text("Simulate Solar Flare Interference", color = Color.White)
         }
         
         Spacer(Modifier.height(32.dp))

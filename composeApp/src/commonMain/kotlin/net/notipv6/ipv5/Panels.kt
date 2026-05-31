@@ -108,7 +108,10 @@ fun FinOpsPanel() {
             Text("total aws bill (estimated): $${totalBurned.value.toInt()}".lowercase(), style = MaterialTheme.typography.h3, fontWeight = FontWeight.Bold)
             
             Spacer(Modifier.height(32.dp))
-            Button(onClick = { burnRate.value *= 2 }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)) {
+            Button(
+                onClick = { burnRate.value *= 2 }, 
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+            ) {
                 Text("scaling for growth (x2 burn)".lowercase(), color = Color.White)
             }
         }
@@ -188,8 +191,12 @@ fun AnsiblePanel() {
                 }
             }
             
-            Button(onClick = { /* run playbook */ }, modifier = Modifier.fillMaxWidth()) {
-                Text("force execute (no callbacks)".lowercase())
+            Button(
+                onClick = { /* run playbook */ }, 
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
+            ) {
+                Text("force execute (no callbacks)".lowercase(), color = Color.White)
             }
         }
     }
@@ -208,8 +215,11 @@ fun B2BSaaSPanel() {
                 Spacer(Modifier.height(16.dp))
                 TextField(value = apiKey.value, onValueChange = { apiKey.value = it }, label = { Text("enter api key".lowercase()) })
                 Spacer(Modifier.height(8.dp))
-                Button(onClick = { if (apiKey.value == "api_key") unlocked.value = true }) {
-                    Text("authenticate (billed hourly)".lowercase())
+                Button(
+                    onClick = { if (apiKey.value == "api_key") unlocked.value = true },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50))
+                ) {
+                    Text("authenticate (billed hourly)".lowercase(), color = Color.White)
                 }
             } else {
                 Text("welcome, valued enterprise partner".lowercase(), color = Color.Magenta, fontWeight = FontWeight.Bold)
