@@ -482,9 +482,9 @@ fun DashboardScreen() {
                 ip = IPv5Address.random()
                 if (isIpv7) ipv7Address = IPv5Address.randomIPv7()
             },
-            colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Red else MaterialTheme.colors.primary)
+            colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Red else Color(0xFF6200EE))
         ) {
-            Text("Re-polarize Quantum Field", fontFamily = fontFamily, color = if(isIpv7) Color.White else Color.Unspecified)
+            Text("Re-polarize Quantum Field", fontFamily = fontFamily, color = Color.White)
         }
         Spacer(Modifier.height(16.dp))
         Text("IPv5 Protocol Status: ${if (isIpv7) "MIND BLOWN" else "HYPER-ACTIVE"}", color = if(isIpv7) Color.Blue else Color(0xFF4CAF50), fontSize = if(isIpv7) 24.sp else 16.sp, fontFamily = titleFont)
@@ -801,9 +801,9 @@ fun Ipv7Screen() {
                     GlobalAppState.ipv7Mode.value = !GlobalAppState.ipv7Mode.value
                     GlobalAppState.refreshColors()
                 },
-                colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Green else MaterialTheme.colors.primary)
+                colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Green else Color(0xFF6200EE))
             ) {
-                Text(if(isIpv7) "DEACTIVATE CHAOS" else "UNLEASH IPv7 CHAOS")
+                Text(if(isIpv7) "DEACTIVATE CHAOS" else "UNLEASH IPv7 CHAOS", color = Color.White)
             }
         }
     }
@@ -939,11 +939,15 @@ fun SettingsScreen() {
         Slider(value = entanglementStrength, onValueChange = { entanglementStrength = it })
         
         Spacer(Modifier.height(32.dp))
-        Button(onClick = { 
-            GlobalAppState.ipv7Mode.value = !isIpv7
-            GlobalAppState.refreshColors()
-        }, modifier = Modifier.fillMaxWidth()) {
-            Text(if(isIpv7) "RESTORE SANITY" else "ACTIVATE IPv7 PROTOCOL")
+        Button(
+            onClick = { 
+                GlobalAppState.ipv7Mode.value = !isIpv7
+                GlobalAppState.refreshColors()
+            }, 
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Red else Color(0xFF6200EE))
+        ) {
+            Text(if(isIpv7) "RESTORE SANITY" else "ACTIVATE IPv7 PROTOCOL", color = Color.White)
         }
     }
 }
