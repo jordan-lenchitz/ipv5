@@ -253,6 +253,10 @@ fun App() {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     
+    LaunchedEffect(Unit) {
+        GlobalAppState.refreshColors()
+    }
+    
     val bgColor = if (isAccessible) Color.White else GlobalAppState.currentBgColor.value
     val navColor = if (isAccessible) Color.LightGray else GlobalAppState.currentNavColor.value
     val textColor = if (isAccessible) Color.Black else GlobalAppState.currentTextColor.value
@@ -278,7 +282,13 @@ fun App() {
                             }
                         },
                         actions = {
-                            TextButton(onClick = { GlobalAppState.accessibilityMode.value = !isAccessible }) {
+                            TextButton(onClick = { 
+                                val wasAccessible = GlobalAppState.accessibilityMode.value
+                                GlobalAppState.accessibilityMode.value = !wasAccessible
+                                if (wasAccessible) {
+                                    GlobalAppState.refreshColors()
+                                }
+                            }) {
                                 Text("accessible", color = textColor)
                             }
                         },
