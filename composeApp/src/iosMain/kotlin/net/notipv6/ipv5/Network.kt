@@ -36,7 +36,7 @@ actual suspend fun pingHost(host: String): Long? {
     return null
 }
 
-@OptIn(ExperimentalForeignApi::class, UnsafeNumber::class)
+@OptIn(ExperimentalForeignApi::class, UnsafeNumber::class, BetaInteropApi::class)
 actual suspend fun resolveDns(domain: String): String? = withContext(Dispatchers.Default) {
     memScoped {
         val hints = alloc<addrinfo>()

@@ -14,5 +14,5 @@ targets:
           ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
         name: Compile Kotlin
     dependencies:
-      - framework: ../composeApp/build/xcode-frameworks/debug/iphonesimulator/ComposeApp.framework
-        embed: true
+      - framework: ../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)/ComposeApp.framework
+        embed: false
