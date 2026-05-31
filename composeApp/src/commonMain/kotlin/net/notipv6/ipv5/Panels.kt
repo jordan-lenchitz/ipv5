@@ -26,9 +26,14 @@ fun ChaoticPanel(
     content: @Composable () -> Unit
 ) {
     val font = remember { GlobalAppState.getRandomFont() }
-    val bgColor = remember { GlobalAppState.getRandomVibrantColor() }
-    val textColor = remember { GlobalAppState.getRandomVibrantColor() }
+    val isAccessible = GlobalAppState.accessibilityMode.value
     val isIpv7 = GlobalAppState.ipv7Mode.value
+    
+    val randomBg = remember(isIpv7) { GlobalAppState.getRandomVibrantColor() }
+    val randomText = remember(isIpv7) { GlobalAppState.getRandomVibrantColor() }
+    
+    val bgColor = if (isAccessible) Color.White else randomBg
+    val textColor = if (isAccessible) Color.Black else randomText
 
     Column(
         modifier = Modifier.fillMaxSize().background(color = bgColor).padding(16.dp),

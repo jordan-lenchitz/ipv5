@@ -28,6 +28,9 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 
 sealed class Screen {
     abstract val route: String
@@ -250,9 +253,16 @@ fun App() {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     
-    val bgColor = if (isAccessible) Color.White else remember(GlobalAppState.ipv7Mode.value, isAccessible) { GlobalAppState.getRandomVibrantColor() }
-    val navColor = if (isAccessible) Color.LightGray else remember(GlobalAppState.ipv7Mode.value, isAccessible) { GlobalAppState.getRandomVibrantColor() }
-    val textColor = if (isAccessible) Color.Black else remember(GlobalAppState.ipv7Mode.value, isAccessible) { GlobalAppState.getRandomVibrantColor() }
+    val randomColors = remember(isIpv7) {
+        Triple(
+            GlobalAppState.getRandomVibrantColor(),
+            GlobalAppState.getRandomVibrantColor(),
+            GlobalAppState.getRandomVibrantColor()
+        )
+    }
+    val bgColor = if (isAccessible) Color.White else randomColors.first
+    val navColor = if (isAccessible) Color.LightGray else randomColors.second
+    val textColor = if (isAccessible) Color.Black else randomColors.third
 
     MaterialTheme(
         colors = MaterialTheme.colors.copy(
@@ -266,20 +276,24 @@ fun App() {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
-                TopAppBar(
-                    title = { Text("ipv5 ${if(isIpv7) "chaos" else "manager"}", color = textColor) },
-                    navigationIcon = {
-                        IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
-                            Icon(Icons.Default.Menu, contentDescription = "menu", tint = textColor)
-                        }
-                    },
-                    actions = {
-                        TextButton(onClick = { GlobalAppState.accessibilityMode.value = !isAccessible }) {
-                            Text("accessible", color = textColor)
-                        }
-                    },
-                    backgroundColor = navColor
-                )
+                Surface(color = navColor, elevation = AppBarDefaults.TopAppBarElevation) {
+                    TopAppBar(
+                        title = { Text("ipv5 ${if(isIpv7) "chaos" else "manager"}", color = textColor) },
+                        navigationIcon = {
+                            IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
+                                Icon(Icons.Default.Menu, contentDescription = "menu", tint = textColor)
+                            }
+                        },
+                        actions = {
+                            TextButton(onClick = { GlobalAppState.accessibilityMode.value = !isAccessible }) {
+                                Text("accessible", color = textColor)
+                            }
+                        },
+                        backgroundColor = Color.Transparent,
+                        elevation = 0.dp,
+                        modifier = Modifier.statusBarsPadding()
+                    )
+                }
             },
             drawerContent = {
                 Column(modifier = Modifier.fillMaxSize().background(color = bgColor)) {
@@ -325,23 +339,29 @@ fun App() {
                 }
             },
             bottomBar = {
-                BottomNavigation(backgroundColor = navColor) {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentRoute = navBackStackEntry?.destination?.route
-                    val screens = listOf(Screen.Dashboard, Screen.Security, Screen.Predictor, Screen.Ping, Screen.DNS, Screen.IPv7, Screen.More)
-                    
-                    screens.forEach { screen ->
-                        BottomNavigationItem(
-                            icon = screen.icon,
-                            label = { Text(screen.label, fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default) },
-                            selected = currentRoute == screen.route,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    popUpTo(Screen.Dashboard.route)
-                                    launchSingleTop = true
-                                 }
-                            }
-                        )
+                Surface(color = navColor, elevation = BottomNavigationDefaults.Elevation) {
+                    BottomNavigation(
+                        backgroundColor = Color.Transparent,
+                        elevation = 0.dp,
+                        modifier = Modifier.navigationBarsPadding()
+                    ) {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentRoute = navBackStackEntry?.destination?.route
+                        val screens = listOf(Screen.Dashboard, Screen.Security, Screen.Predictor, Screen.Ping, Screen.DNS, Screen.IPv7, Screen.More)
+                        
+                        screens.forEach { screen ->
+                            BottomNavigationItem(
+                                icon = screen.icon,
+                                label = { Text(screen.label, fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default) },
+                                selected = currentRoute == screen.route,
+                                onClick = {
+                                    navController.navigate(screen.route) {
+                                        popUpTo(Screen.Dashboard.route)
+                                        launchSingleTop = true
+                                     }
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -399,6 +419,7 @@ fun App() {
 @Composable
 fun DashboardScreen() {
     val isIpv7 = GlobalAppState.ipv7Mode.value
+    val isAccessible = GlobalAppState.accessibilityMode.value
     val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
     val titleFont = if (isIpv7) FontFamily.Cursive else FontFamily.Default
     
@@ -421,21 +442,21 @@ fun DashboardScreen() {
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("IPv5 Dashboard", style = MaterialTheme.typography.h3, fontFamily = titleFont, color = if(isIpv7) Color.Cyan else Color.Unspecified)
+        Text("IPv5 Dashboard", style = MaterialTheme.typography.h3, fontFamily = titleFont, color = if(isAccessible) Color.Black else if(isIpv7) Color.Cyan else Color.Unspecified)
         Spacer(Modifier.height(16.dp))
         
-        Text("Quantum Packet State: $quantumState", color = Color.Magenta, fontWeight = FontWeight.Bold, fontFamily = fontFamily)
+        Text("Quantum Packet State: $quantumState", color = if(isAccessible) Color.Black else Color.Magenta, fontWeight = FontWeight.Bold, fontFamily = fontFamily)
         Text("Local Cloud Density: ${Random.nextInt(0, 100)}% (Routing impact: HIGH)", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
         
         Spacer(Modifier.height(16.dp))
         Text("Legacy Protocols:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
         Text("IPv3 (Deprecated): 192.168.1.???", color = Color.Gray, fontFamily = fontFamily, fontWeight = FontWeight.Bold)
-        Text("IPv4 (Boring): $realIpv4", color = if(isIpv7) Color.Green else Color.Gray, fontFamily = fontFamily)
-        Text("IPv6 (Try-hard): $realIpv6", color = if(isIpv7) Color.Red else Color.Gray, fontFamily = fontFamily)
+        Text("IPv4 (Boring): $realIpv4", color = if(isAccessible) Color.Black else if(isIpv7) Color.Green else Color.Gray, fontFamily = fontFamily)
+        Text("IPv6 (Try-hard): $realIpv6", color = if(isAccessible) Color.Black else if(isIpv7) Color.Red else Color.Gray, fontFamily = fontFamily)
 
         if (isIpv7) {
             Spacer(Modifier.height(8.dp))
-            Text("IPv7 (PREMIUM): $ipv7Address", color = Color.Yellow, fontFamily = fontFamily, fontWeight = FontWeight.ExtraBold)
+            Text("IPv7 (PREMIUM): $ipv7Address", color = if(isAccessible) Color.Black else Color.Yellow, fontFamily = fontFamily, fontWeight = FontWeight.ExtraBold)
         }
 
         Spacer(Modifier.height(32.dp))
@@ -497,6 +518,7 @@ fun SecurityScreen() {
     var tinFoilMode by remember { mutableStateOf(false) }
     var bluetoothStatus by remember { mutableStateOf("Ready") }
     val isIpv7 = GlobalAppState.ipv7Mode.value
+    val isAccessible = GlobalAppState.accessibilityMode.value
     val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
@@ -532,7 +554,7 @@ fun SecurityScreen() {
         if (entangled.isNotEmpty()) {
             Spacer(Modifier.height(16.dp))
             Text("Entangled IPv5 Address:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
-            Text(entangled, color = if(isIpv7) Color.White else Color.Magenta, style = MaterialTheme.typography.h5, fontFamily = fontFamily, modifier = Modifier.background(color = if(isIpv7) Color.Black else Color.Transparent))
+            Text(entangled, color = if(isAccessible) Color.Black else if(isIpv7) Color.White else Color.Magenta, style = MaterialTheme.typography.h5, fontFamily = fontFamily, modifier = Modifier.background(color = if(isAccessible) Color.Transparent else if(isIpv7) Color.Black else Color.Transparent))
         }
         
         Spacer(Modifier.height(32.dp))
@@ -565,6 +587,7 @@ fun PredictorScreen() {
     var tunnelingPort by remember { mutableStateOf(0) }
     var isTunneling by remember { mutableStateOf(false) }
     val isIpv7 = GlobalAppState.ipv7Mode.value
+    val isAccessible = GlobalAppState.accessibilityMode.value
     val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
 
     LaunchedEffect(isTunneling) {
@@ -587,7 +610,7 @@ fun PredictorScreen() {
             Text("Predict Active Port", fontFamily = fontFamily)
         }
         if (port != 0) {
-            Text("Suggested Port: $port", style = MaterialTheme.typography.h5, color = if(isIpv7) Color.Red else Color(0xFF4CAF50), fontFamily = fontFamily)
+            Text("Suggested Port: $port", style = MaterialTheme.typography.h5, color = if(isAccessible) Color.Black else if(isIpv7) Color.Red else Color(0xFF4CAF50), fontFamily = fontFamily)
         }
         
         Spacer(Modifier.height(32.dp))
@@ -702,6 +725,7 @@ fun DnsScreen() {
     var ancestralMode by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val isIpv7 = GlobalAppState.ipv7Mode.value
+    val isAccessible = GlobalAppState.accessibilityMode.value
     val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -754,7 +778,7 @@ fun DnsScreen() {
         Spacer(Modifier.height(16.dp))
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(logs) { log ->
-                Text("> $log", style = MaterialTheme.typography.overline, fontFamily = fontFamily, fontSize = if(isIpv7) 16.sp else 10.sp, color = if(isIpv7) Color.White else Color.Unspecified)
+                Text("> $log", style = MaterialTheme.typography.overline, fontFamily = fontFamily, fontSize = if(isIpv7) 16.sp else 10.sp, color = if(isAccessible) Color.Black else if(isIpv7) Color.White else Color.Unspecified)
             }
         }
     }
