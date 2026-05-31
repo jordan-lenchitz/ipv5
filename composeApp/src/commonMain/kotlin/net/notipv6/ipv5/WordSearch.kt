@@ -5,6 +5,10 @@ import androidx.compose.runtime.Composable
 @Composable
 fun WordSearchPanel() {
     ChaoticPanel(title = "Word Search") {
-        // TODO: Implement the word search game UI and logic here
+        androidx.compose.material.Text(
+            "COMING SOON", 
+            style = androidx.compose.material.MaterialTheme.typography.h2,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+        )
     }
 }
