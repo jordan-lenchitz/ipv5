@@ -48,7 +48,7 @@ actual suspend fun resolveDns(domain: String): String? = withContext(Dispatchers
             val res = result.value!!
             val host = allocArray<ByteVar>(NI_MAXHOST)
             
-            val resultIp = if (getnameinfo(res.pointed.ai_addr, res.pointed.ai_addrlen, host, NI_MAXHOST.convert(), null, 0, NI_NUMERICHOST) == 0) {
+            val resultIp = if (getnameinfo(res.pointed.ai_addr, res.pointed.ai_addrlen, host, NI_MAXHOST.toUInt(), null, 0u, NI_NUMERICHOST) == 0) {
                 host.toKString()
             } else {
                 null
