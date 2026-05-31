@@ -128,7 +128,7 @@ fun SplunkPanel() {
                 "bit flipped by cosmic ray",
                 "server decided it's a toaster now"
             ).random()
-            logs.add(0, "[${System.currentTimeMillis()}] $log".lowercase())
+            logs.add(0, "[${currentTimeMillis()}] $log".lowercase())
             if (logs.size > 50) logs.removeAt(50)
         }
     }

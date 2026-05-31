@@ -139,7 +139,7 @@ fun App() {
                                     .fillMaxWidth()
                                     .clickable {
                                         navController.navigate(screen.route) {
-                                            popUpTo(navController.graph.startDestinationId)
+                                            popUpTo(Screen.Dashboard.route)
                                             launchSingleTop = true
                                         }
                                         scope.launch { scaffoldState.drawerState.close() }
@@ -168,7 +168,7 @@ fun App() {
                             selected = currentRoute == screen.route,
                             onClick = {
                                 navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.startDestinationId)
+                                    popUpTo(Screen.Dashboard.route)
                                     launchSingleTop = true
                                  }
                             }

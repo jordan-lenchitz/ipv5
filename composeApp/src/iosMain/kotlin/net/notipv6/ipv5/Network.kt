@@ -6,12 +6,13 @@ import platform.Foundation.*
 import platform.posix.*
 import kotlinx.cinterop.*
 
+@OptIn(ExperimentalForeignApi::class)
 actual suspend fun fetchIp(v6: Boolean): String = withContext(Dispatchers.Default) {
     try {
         val urlString = if (v6) "https://api64.ipify.org" else "https://api.ipify.org"
         val url = NSURL.URLWithString(urlString)
         val data = NSData.dataWithContentsOfURL(url!!)
-        val ip = NSString.stringWithData(data!!, NSUTF8StringEncoding) as String
+        val ip = NSString.create(data = data!!, encoding = NSUTF8StringEncoding) as String
         
         if (v6 && !ip.contains(":")) {
             val parts = ip.split(".")
@@ -35,6 +36,7 @@ actual suspend fun pingHost(host: String): Long? {
     return null
 }
 
+@OptIn(ExperimentalForeignApi::class, UnsafeNumber::class)
 actual suspend fun resolveDns(domain: String): String? = withContext(Dispatchers.Default) {
     memScoped {
         val hints = alloc<addrinfo>()
@@ -44,21 +46,24 @@ actual suspend fun resolveDns(domain: String): String? = withContext(Dispatchers
         val result = allocPointerTo<addrinfo>()
         if (getaddrinfo(domain, null, hints.ptr, result.ptr) == 0) {
             val res = result.value!!
-            val ipString = ByteArray(INET6_ADDRSTRLEN)
+            val ipString = allocArray<ByteVar>(INET6_ADDRSTRLEN)
             val addr = res.ai_addr!!
             
             val ip = if (res.ai_family == AF_INET) {
                 val addrIn = addr.reinterpret<sockaddr_in>()
-                inet_ntop(AF_INET, addrIn.ptr.memberAt(0).ptr, ipString.refTo(0), INET_ADDRSTRLEN.convert())
+                inet_ntop(AF_INET, addrIn.ptr.memberAt(0).ptr, ipString, INET_ADDRSTRLEN.convert())
             } else {
                 val addrIn6 = addr.reinterpret<sockaddr_in6>()
-                inet_ntop(AF_INET6, addrIn6.ptr.memberAt(0).ptr, ipString.refTo(0), INET6_ADDRSTRLEN.convert())
+                inet_ntop(AF_INET6, addrIn6.ptr.memberAt(0).ptr, ipString, INET6_ADDRSTRLEN.convert())
             }
             
+            val resultIp = ip?.toKString()
             freeaddrinfo(res)
-            ip?.toKString()
+            resultIp
         } else {
             null
         }
     }
 }
+
+actual fun currentTimeMillis(): Long = (NSDate().timeIntervalSince1970 * 1000).toLong()

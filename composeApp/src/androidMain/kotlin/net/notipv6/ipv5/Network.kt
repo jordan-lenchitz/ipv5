@@ -43,3 +43,5 @@ actual suspend fun resolveDns(domain: String): String? = withContext(Dispatchers
         null
     }
 }
+
+actual fun currentTimeMillis(): Long = System.currentTimeMillis()

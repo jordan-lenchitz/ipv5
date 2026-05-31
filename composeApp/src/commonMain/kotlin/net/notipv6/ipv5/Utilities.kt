@@ -16,7 +16,7 @@ object IPv5Utilities {
     }
 
     fun predictPort(batteryPercentage: Int): Int {
-        val timeFactor = (System.currentTimeMillis() % 1000).toInt()
+        val timeFactor = (currentTimeMillis() % 1000).toInt()
         return (1024 + (batteryPercentage * 13) + timeFactor) % 65535
     }
 
