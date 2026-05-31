@@ -6,7 +6,7 @@ import platform.Foundation.*
 import platform.posix.*
 import kotlinx.cinterop.*
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 actual suspend fun fetchIp(v6: Boolean): String = withContext(Dispatchers.Default) {
     try {
         val urlString = if (v6) "https://api64.ipify.org" else "https://api.ipify.org"
