@@ -1,0 +1,18 @@
+name: iosApp
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources: [iosApp]
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: net.notipv6.ipv5
+      DEVELOPMENT_TEAM: "" # Set your team ID here if running on a real device
+    preBuildScripts:
+      - script: |
+          cd "$SRCROOT/.."
+          ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
+        name: Compile Kotlin
+    dependencies:
+      - framework: ../composeApp/build/xcode-frameworks/debug/iphonesimulator/ComposeApp.framework
+        embed: true
