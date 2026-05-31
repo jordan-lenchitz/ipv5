@@ -46,18 +46,14 @@ actual suspend fun resolveDns(domain: String): String? = withContext(Dispatchers
         val result = allocPointerTo<addrinfo>()
         if (getaddrinfo(domain, null, hints.ptr, result.ptr) == 0) {
             val res = result.value!!
-            val ipString = allocArray<ByteVar>(INET6_ADDRSTRLEN)
-            val addr = res.ai_addr!!
+            val host = allocArray<ByteVar>(NI_MAXHOST)
             
-            val ip = if (res.ai_family == AF_INET) {
-                val addrIn = addr.reinterpret<sockaddr_in>()
-                inet_ntop(AF_INET, addrIn.ptr.memberAt(0).ptr, ipString, INET_ADDRSTRLEN.convert())
+            val resultIp = if (getnameinfo(res.pointed.ai_addr, res.pointed.ai_addrlen, host, NI_MAXHOST.convert(), null, 0, NI_NUMERICHOST) == 0) {
+                host.toKString()
             } else {
-                val addrIn6 = addr.reinterpret<sockaddr_in6>()
-                inet_ntop(AF_INET6, addrIn6.ptr.memberAt(0).ptr, ipString, INET6_ADDRSTRLEN.convert())
+                null
             }
             
-            val resultIp = ip?.toKString()
             freeaddrinfo(res)
             resultIp
         } else {
