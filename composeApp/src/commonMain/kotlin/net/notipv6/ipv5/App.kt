@@ -29,49 +29,218 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-sealed class Screen(val route: String, val label: String, val icon: @Composable () -> Unit) {
-    object Dashboard : Screen("dashboard", "home", { Icon(Icons.Default.Home, null) })
-    object Security : Screen("security", "mac", { Icon(Icons.Default.Lock, null) })
-    object Predictor : Screen("predictor", "ports", { Icon(Icons.Default.Refresh, null) })
-    object Ping : Screen("ping", "ping", { Icon(Icons.AutoMirrored.Filled.Send, null) })
-    object DNS : Screen("dns", "dns", { Icon(Icons.Default.Search, null) })
-    object IPv7 : Screen("ipv7", "ipv7+", { Icon(Icons.Default.Star, null) })
-    object More : Screen("more", "more (36)", { Icon(Icons.AutoMirrored.Filled.List, null) })
-    object About : Screen("about", "about", { Icon(Icons.Default.Info, null) })
-    object Settings : Screen("settings", "settings", { Icon(Icons.Default.Settings, null) })
-    object Admin : Screen("admin", "admin panel", { Icon(Icons.Default.Lock, null) })
-    object Dev : Screen("dev", "dev panel", { Icon(Icons.Default.Build, null) })
-    object DevOps : Screen("devops", "devops panel", { Icon(Icons.Default.Refresh, null) })
-    object FinOps : Screen("finops", "finops panel", { Icon(Icons.Default.ShoppingCart, null) })
-    object Splunk : Screen("splunk", "splunk panel", { Icon(Icons.Default.Search, null) })
-    object Grafana : Screen("grafana", "grafana panel", { Icon(Icons.AutoMirrored.Filled.List, null) })
-    object Ansible : Screen("ansible", "ansible panel", { Icon(Icons.Default.Check, null) })
-    object B2BSaaS : Screen("b2bsaas", "b2b saas panel", { Icon(Icons.Default.Star, null) })
-    object Chaos : Screen("chaos", "chaos panel", { Icon(Icons.Default.Warning, null) })
-    object Pizza : Screen("pizza", "pizza tracker", { Icon(Icons.Default.ShoppingCart, null) })
-    object HR : Screen("hr", "hr portal", { Icon(Icons.Default.Person, null) })
-    object Lawyer : Screen("lawyer", "legal dept", { Icon(Icons.Default.Info, null) })
-    object Marketing : Screen("marketing", "marketing", { Icon(Icons.Default.Email, null) })
-    object Coffee : Screen("coffee", "coffee status", { Icon(Icons.Default.Favorite, null) })
-    object Weather : Screen("weather", "mars weather", { Icon(Icons.Default.LocationOn, null) })
-    object Stock : Screen("stock", "stock market", { Icon(Icons.Default.Notifications, null) })
-    object Astrology : Screen("astrology", "astrology routing", { Icon(Icons.Default.Star, null) })
-    object History : Screen("history", "history", { Icon(Icons.Default.AccountBox, null) })
-    object Secret : Screen("secret", "secret panel", { Icon(Icons.Default.Lock, null) })
-    object BugTracker : Screen("bugtracker", "bug tracker", { Icon(Icons.Default.Warning, null) })
-    object Support : Screen("support", "support", { Icon(Icons.Default.Call, null) })
-    object Compliance : Screen("compliance", "compliance", { Icon(Icons.Default.Check, null) })
-    object Doc : Screen("doc", "documentation", { Icon(Icons.Default.Menu, null) })
-    object Feedback : Screen("feedback", "feedback", { Icon(Icons.AutoMirrored.Filled.Send, null) })
-    object Sales : Screen("sales", "sales", { Icon(Icons.Default.ShoppingCart, null) })
-    object Infra : Screen("infra", "infrastructure", { Icon(Icons.Default.Build, null) })
-    object Database : Screen("database", "database", { Icon(Icons.AutoMirrored.Filled.List, null) })
-    object ApiDocs : Screen("apidocs", "api docs", { Icon(Icons.Default.MoreVert, null) })
-    object Telemetry : Screen("telemetry", "telemetry", { Icon(Icons.Default.Info, null) })
-    object Void : Screen("void", "the void", { Icon(Icons.Default.Clear, null) })
-    object QuantumCat : Screen("quantumcat", "quantum cat", { Icon(Icons.Default.Face, null) })
-    object WordSearch : Screen("wordsearch", "word search", { Icon(Icons.Default.Search, null) })
+sealed class Screen {
+    abstract val route: String
+    abstract val label: String
+    abstract val icon: @Composable () -> Unit
+
+    object Dashboard : Screen() {
+        override val route = "dashboard"
+        override val label = "home"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Home, null) }
+    }
+    object Security : Screen() {
+        override val route = "security"
+        override val label = "mac"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Lock, null) }
+    }
+    object Predictor : Screen() {
+        override val route = "predictor"
+        override val label = "ports"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Refresh, null) }
+    }
+    object Ping : Screen() {
+        override val route = "ping"
+        override val label = "ping"
+        override val icon: @Composable () -> Unit = { Icon(Icons.AutoMirrored.Filled.Send, null) }
+    }
+    object DNS : Screen() {
+        override val route = "dns"
+        override val label = "dns"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Search, null) }
+    }
+    object IPv7 : Screen() {
+        override val route = "ipv7"
+        override val label = "ipv7+"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Star, null) }
+    }
+    object More : Screen() {
+        override val route = "more"
+        override val label = "more (36)"
+        override val icon: @Composable () -> Unit = { Icon(Icons.AutoMirrored.Filled.List, null) }
+    }
+    object About : Screen() {
+        override val route = "about"
+        override val label = "about"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Info, null) }
+    }
+    object Settings : Screen() {
+        override val route = "settings"
+        override val label = "settings"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Settings, null) }
+    }
+    object Admin : Screen() {
+        override val route = "admin"
+        override val label = "admin panel"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Lock, null) }
+    }
+    object Dev : Screen() {
+        override val route = "dev"
+        override val label = "dev panel"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Build, null) }
+    }
+    object DevOps : Screen() {
+        override val route = "devops"
+        override val label = "devops panel"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Refresh, null) }
+    }
+    object FinOps : Screen() {
+        override val route = "finops"
+        override val label = "finops panel"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.ShoppingCart, null) }
+    }
+    object Splunk : Screen() {
+        override val route = "splunk"
+        override val label = "splunk panel"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Search, null) }
+    }
+    object Grafana : Screen() {
+        override val route = "grafana"
+        override val label = "grafana panel"
+        override val icon: @Composable () -> Unit = { Icon(Icons.AutoMirrored.Filled.List, null) }
+    }
+    object Ansible : Screen() {
+        override val route = "ansible"
+        override val label = "ansible panel"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Check, null) }
+    }
+    object B2BSaaS : Screen() {
+        override val route = "b2bsaas"
+        override val label = "b2b saas panel"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Star, null) }
+    }
+    object Chaos : Screen() {
+        override val route = "chaos"
+        override val label = "chaos panel"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Warning, null) }
+    }
+    object Pizza : Screen() {
+        override val route = "pizza"
+        override val label = "pizza tracker"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.ShoppingCart, null) }
+    }
+    object HR : Screen() {
+        override val route = "hr"
+        override val label = "hr portal"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Person, null) }
+    }
+    object Lawyer : Screen() {
+        override val route = "lawyer"
+        override val label = "legal dept"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Info, null) }
+    }
+    object Marketing : Screen() {
+        override val route = "marketing"
+        override val label = "marketing"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Email, null) }
+    }
+    object Coffee : Screen() {
+        override val route = "coffee"
+        override val label = "coffee status"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Favorite, null) }
+    }
+    object Weather : Screen() {
+        override val route = "weather"
+        override val label = "mars weather"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.LocationOn, null) }
+    }
+    object Stock : Screen() {
+        override val route = "stock"
+        override val label = "stock market"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Notifications, null) }
+    }
+    object Astrology : Screen() {
+        override val route = "astrology"
+        override val label = "astrology routing"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Star, null) }
+    }
+    object History : Screen() {
+        override val route = "history"
+        override val label = "history"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.AccountBox, null) }
+    }
+    object Secret : Screen() {
+        override val route = "secret"
+        override val label = "secret panel"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Lock, null) }
+    }
+    object BugTracker : Screen() {
+        override val route = "bugtracker"
+        override val label = "bug tracker"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Warning, null) }
+    }
+    object Support : Screen() {
+        override val route = "support"
+        override val label = "support"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Call, null) }
+    }
+    object Compliance : Screen() {
+        override val route = "compliance"
+        override val label = "compliance"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Check, null) }
+    }
+    object Doc : Screen() {
+        override val route = "doc"
+        override val label = "documentation"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Menu, null) }
+    }
+    object Feedback : Screen() {
+        override val route = "feedback"
+        override val label = "feedback"
+        override val icon: @Composable () -> Unit = { Icon(Icons.AutoMirrored.Filled.Send, null) }
+    }
+    object Sales : Screen() {
+        override val route = "sales"
+        override val label = "sales"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.ShoppingCart, null) }
+    }
+    object Infra : Screen() {
+        override val route = "infra"
+        override val label = "infrastructure"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Build, null) }
+    }
+    object Database : Screen() {
+        override val route = "database"
+        override val label = "database"
+        override val icon: @Composable () -> Unit = { Icon(Icons.AutoMirrored.Filled.List, null) }
+    }
+    object ApiDocs : Screen() {
+        override val route = "apidocs"
+        override val label = "api docs"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.MoreVert, null) }
+    }
+    object Telemetry : Screen() {
+        override val route = "telemetry"
+        override val label = "telemetry"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Info, null) }
+    }
+    object Void : Screen() {
+        override val route = "void"
+        override val label = "the void"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Clear, null) }
+    }
+    object QuantumCat : Screen() {
+        override val route = "quantumcat"
+        override val label = "quantum cat"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Face, null) }
+    }
+    object WordSearch : Screen() {
+        override val route = "wordsearch"
+        override val label = "word search"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Search, null) }
+    }
 }
+
 
 @Composable
 fun App() {
