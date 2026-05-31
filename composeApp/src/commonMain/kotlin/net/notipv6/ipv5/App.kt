@@ -253,16 +253,9 @@ fun App() {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     
-    val randomColors = remember(isIpv7) {
-        Triple(
-            GlobalAppState.getRandomVibrantColor(),
-            GlobalAppState.getRandomVibrantColor(),
-            GlobalAppState.getRandomVibrantColor()
-        )
-    }
-    val bgColor = if (isAccessible) Color.White else randomColors.first
-    val navColor = if (isAccessible) Color.LightGray else randomColors.second
-    val textColor = if (isAccessible) Color.Black else randomColors.third
+    val bgColor = if (isAccessible) Color.White else GlobalAppState.currentBgColor.value
+    val navColor = if (isAccessible) Color.LightGray else GlobalAppState.currentNavColor.value
+    val textColor = if (isAccessible) Color.Black else GlobalAppState.currentTextColor.value
 
     MaterialTheme(
         colors = MaterialTheme.colors.copy(
@@ -796,6 +789,7 @@ fun Ipv7Screen() {
             Button(
                 onClick = {
                     GlobalAppState.ipv7Mode.value = !GlobalAppState.ipv7Mode.value
+                    GlobalAppState.refreshColors()
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Green else MaterialTheme.colors.primary)
             ) {
@@ -935,7 +929,10 @@ fun SettingsScreen() {
         Slider(value = entanglementStrength, onValueChange = { entanglementStrength = it })
         
         Spacer(Modifier.height(32.dp))
-        Button(onClick = { GlobalAppState.ipv7Mode.value = !isIpv7 }, modifier = Modifier.fillMaxWidth()) {
+        Button(onClick = { 
+            GlobalAppState.ipv7Mode.value = !isIpv7
+            GlobalAppState.refreshColors()
+        }, modifier = Modifier.fillMaxWidth()) {
             Text(if(isIpv7) "RESTORE SANITY" else "ACTIVATE IPv7 PROTOCOL")
         }
     }

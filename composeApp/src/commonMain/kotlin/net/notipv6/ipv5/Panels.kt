@@ -29,11 +29,9 @@ fun ChaoticPanel(
     val isAccessible = GlobalAppState.accessibilityMode.value
     val isIpv7 = GlobalAppState.ipv7Mode.value
     
-    val randomBg = remember(isIpv7) { GlobalAppState.getRandomVibrantColor() }
-    val randomText = remember(isIpv7) { GlobalAppState.getRandomVibrantColor() }
-    
-    val bgColor = if (isAccessible) Color.White else randomBg
-    val textColor = if (isAccessible) Color.Black else randomText
+    // Use session-persistent colors instead of local remember
+    val bgColor = if (isAccessible) Color.White else GlobalAppState.currentBgColor.value
+    val textColor = if (isAccessible) Color.Black else GlobalAppState.currentTextColor.value
 
     Column(
         modifier = Modifier.fillMaxSize().background(color = bgColor).padding(16.dp),
