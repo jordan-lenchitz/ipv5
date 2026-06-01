@@ -63,7 +63,7 @@ class WordSearchEngine(val size: Int = 12) {
     }
 
     private fun fillRandom() {
-        val chars = 'a'..'z'
+        val chars = ('a'..'z') + ('0'..'9') + listOf('.', '-')
         for (y in 0 until size) {
             for (x in 0 until size) {
                 if (grid[y][x] == ' ') {
@@ -78,6 +78,11 @@ class WordSearchEngine(val size: Int = 12) {
 fun WordSearchPanel() {
     val wordPool = remember {
         listOf(
+            // --- Alphanumeric & Network Identifiers ---
+            "1.1.1.1", "8.8.8.8", "127.0.0.1", "ipv4", "ipv6", "rfc791", "rfc2616", "rfc418", "rfc1149",
+            "404error", "500error", "200ok", "301moved", "0xdeadbeef", "0xcahebabe", "1337h4x0r",
+            "port80", "port443", "tcp22", "udp53", "802.11", "cat6", "rs232", "x86_64", "arm64",
+            "win32", "posix", "v6.0", "beta2", "build42", "node.js", "sha256", "md5", "bip39",
             // --- Core & Lore ---
             "ipv5", "chaos", "quantum", "packet", "subnet", "router", "switch", "network",
             "bridge", "protocol", "octet", "entropy", "logic", "drift", "flux", "buffer",
