@@ -1,5 +1,7 @@
 package net.notipv6.ipv5
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -324,11 +326,14 @@ fun App() {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        navController.navigate(screen.route) {
-                                            popUpTo(Screen.Dashboard.route)
-                                            launchSingleTop = true
+                                        scope.launch {
+                                            if (isIpv7) delay(2000)
+                                            navController.navigate(screen.route) {
+                                                popUpTo(Screen.Dashboard.route)
+                                                launchSingleTop = true
+                                            }
+                                            scaffoldState.drawerState.close()
                                         }
-                                        scope.launch { scaffoldState.drawerState.close() }
                                     }
                                     .padding(16.dp),
                                 verticalAlignment = Alignment.CenterVertically
@@ -358,10 +363,13 @@ fun App() {
                                 label = { Text(screen.label, fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default) },
                                 selected = currentRoute == screen.route,
                                 onClick = {
-                                    navController.navigate(screen.route) {
-                                        popUpTo(Screen.Dashboard.route)
-                                        launchSingleTop = true
-                                     }
+                                    scope.launch {
+                                        if (isIpv7) delay(2000)
+                                        navController.navigate(screen.route) {
+                                            popUpTo(Screen.Dashboard.route)
+                                            launchSingleTop = true
+                                         }
+                                    }
                                 }
                             )
                         }
@@ -369,7 +377,19 @@ fun App() {
                 }
             }
         ) { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding).fillMaxSize().background(color = bgColor)) {                NavHost(navController, startDestination = Screen.Dashboard.route) {
+            val contentOffset = remember { Animatable(0f) }
+            LaunchedEffect(isIpv7) {
+                if (isIpv7) {
+                    while(true) {
+                        contentOffset.animateTo(15f, animationSpec = tween(10000))
+                        contentOffset.animateTo(-15f, animationSpec = tween(10000))
+                    }
+                } else {
+                    contentOffset.animateTo(0f)
+                }
+            }
+            Box(modifier = Modifier.padding(innerPadding).fillMaxSize().offset(y = contentOffset.value.dp).background(color = bgColor)) {
+                NavHost(navController, startDestination = Screen.Dashboard.route) {
                     composable(Screen.Dashboard.route) { DashboardScreen() }
                     composable(Screen.Security.route) { SecurityScreen() }
                     composable(Screen.Predictor.route) { PredictorScreen() }
