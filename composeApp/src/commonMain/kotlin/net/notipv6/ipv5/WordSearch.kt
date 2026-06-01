@@ -2,16 +2,21 @@ package net.notipv6.ipv5
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.random.Random
@@ -136,12 +141,15 @@ fun WordSearchPanel() {
     }
 
     var selectedStart by remember { mutableStateOf<Pair<Int, Int>?>(null) }
+    var selectedEnd by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var foundWords by remember { mutableStateOf(setOf<String>()) }
     val isIpv7 = GlobalAppState.ipv7Mode.value
     val isAccessible = GlobalAppState.accessibilityMode.value
-    val textColor = if (isAccessible) Color.Black else GlobalAppState.currentTextColor.value
     val foundColor = Color(0xFF4DB6AC) // Soul-soothing soft teal
+    val textColor = if (isAccessible) Color.Black else GlobalAppState.currentTextColor.value
     val font = FontFamily.Default // Sexy Dyslexia Friendly Font (Clean Sans-Serif)
+
+    val gridPositions = remember { mutableMapOf<Pair<Int, Int>, Pair<Offset, IntSize>>() }
 
     ChaoticPanel(title = "word search") {
         Column(
@@ -157,14 +165,48 @@ fun WordSearchPanel() {
             
             Spacer(Modifier.height(8.dp))
 
-            // The Grid
-            Box(modifier = Modifier.fillMaxWidth().aspectRatio(1f)) {
+            // The Grid with Drag Support
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .pointerInput(engine) {
+                        detectDragGestures(
+                            onDragStart = { offset ->
+                                val cell = findCellAt(offset, gridPositions)
+                                selectedStart = cell
+                                selectedEnd = cell
+                            },
+                            onDrag = { change, _ ->
+                                val cell = findCellAt(change.position, gridPositions)
+                                if (cell != null) {
+                                    selectedEnd = cell
+                                }
+                            },
+                            onDragEnd = {
+                                if (selectedStart != null && selectedEnd != null) {
+                                    checkSelection(selectedStart!!, selectedEnd!!, engine, wordsToFind) { found ->
+                                        if (found != null) {
+                                            foundWords = foundWords + found
+                                        }
+                                    }
+                                }
+                                selectedStart = null
+                                selectedEnd = null
+                            },
+                            onDragCancel = {
+                                selectedStart = null
+                                selectedEnd = null
+                            }
+                        )
+                    }
+            ) {
                 Column {
                     for (y in 0 until gridSize) {
                         Row(modifier = Modifier.weight(1f)) {
                             for (x in 0 until gridSize) {
                                 val char = engine.grid[y][x]
-                                val isSelected = selectedStart?.let { it.first == x && it.second == y } ?: false
+                                val isPartOfSelection = isCellInCurrentSelection(x, y, selectedStart, selectedEnd)
                                 val isPartOfFound = isCellInFoundWord(x, y, engine.placedWords, foundWords)
 
                                 Box(
@@ -172,9 +214,12 @@ fun WordSearchPanel() {
                                         .weight(1f)
                                         .aspectRatio(1f)
                                         .padding(1.dp)
+                                        .onGloballyPositioned { coords ->
+                                            gridPositions[x to y] = coords.positionInParent() to coords.size
+                                        }
                                         .background(
                                             when {
-                                                isSelected -> Color.Yellow.copy(alpha = 0.5f)
+                                                isPartOfSelection -> Color.Yellow.copy(alpha = 0.5f)
                                                 isPartOfFound -> foundColor.copy(alpha = 0.4f)
                                                 else -> Color.Transparent
                                             },
@@ -184,20 +229,7 @@ fun WordSearchPanel() {
                                             0.5.dp, 
                                             textColor.copy(alpha = 0.1f), 
                                             RoundedCornerShape(2.dp)
-                                        )
-                                        .clickable {
-                                            if (selectedStart == null) {
-                                                selectedStart = x to y
-                                            } else {
-                                                val start = selectedStart!!
-                                                checkSelection(start.first, start.second, x, y, engine, wordsToFind) { found ->
-                                                    if (found != null) {
-                                                        foundWords = foundWords + found
-                                                    }
-                                                }
-                                                selectedStart = null
-                                            }
-                                        },
+                                        ),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
@@ -246,6 +278,7 @@ fun WordSearchPanel() {
                     wordsToFind = wordPool.shuffled().take(8)
                     foundWords = emptySet()
                     selectedStart = null
+                    selectedEnd = null
                 },
                 modifier = Modifier.height(36.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = if (isIpv7) Color.Red else Color(0xFF6200EE))
@@ -267,6 +300,38 @@ fun WordSearchPanel() {
     }
 }
 
+private fun findCellAt(offset: Offset, positions: Map<Pair<Int, Int>, Pair<Offset, IntSize>>): Pair<Int, Int>? {
+    for ((cell, data) in positions) {
+        val (pos, size) = data
+        if (offset.x >= pos.x && offset.x <= pos.x + size.width &&
+            offset.y >= pos.y && offset.y <= pos.y + size.height) {
+            return cell
+        }
+    }
+    return null
+}
+
+private fun isCellInCurrentSelection(x: Int, y: Int, start: Pair<Int, Int>?, end: Pair<Int, Int>?): Boolean {
+    if (start == null || end == null) return false
+    
+    val dx = end.first - start.first
+    val dy = end.second - start.second
+    val adx = kotlin.math.abs(dx)
+    val ady = kotlin.math.abs(dy)
+    
+    // Check if it's on a valid line (horizontal, vertical, or 45-degree diagonal)
+    if (dx != 0 && dy != 0 && adx != ady) return x == start.first && y == start.second
+    
+    val stepX = if (dx == 0) 0 else dx / adx
+    val stepY = if (dy == 0) 0 else dy / ady
+    val length = kotlin.math.max(adx, ady)
+    
+    for (i in 0..length) {
+        if (start.first + i * stepX == x && start.second + i * stepY == y) return true
+    }
+    return false
+}
+
 private fun isCellInFoundWord(x: Int, y: Int, placedWords: List<WordLocation>, foundWords: Set<String>): Boolean {
     for (loc in placedWords) {
         if (foundWords.contains(loc.word)) {
@@ -280,19 +345,27 @@ private fun isCellInFoundWord(x: Int, y: Int, placedWords: List<WordLocation>, f
     return false
 }
 
-private fun checkSelection(x1: Int, y1: Int, x2: Int, y2: Int, engine: WordSearchEngine, wordsToFind: List<String>, onFound: (String?) -> Unit) {
+private fun checkSelection(start: Pair<Int, Int>, end: Pair<Int, Int>, engine: WordSearchEngine, wordsToFind: List<String>, onFound: (String?) -> Unit) {
+    val (x1, y1) = start
+    val (x2, y2) = end
+    
     val dx = x2 - x1
     val dy = y2 - y1
-    
     val adx = kotlin.math.abs(dx)
     val ady = kotlin.math.abs(dy)
     
-    if (dx == 0 && dy == 0) return 
+    if (dx == 0 && dy == 0) {
+        onFound(null)
+        return
+    }
     
     val stepX = if (dx == 0) 0 else dx / adx
     val stepY = if (dy == 0) 0 else dy / ady
     
-    if (adx != 0 && ady != 0 && adx != ady) return
+    if (adx != 0 && ady != 0 && adx != ady) {
+        onFound(null)
+        return
+    }
 
     val length = kotlin.math.max(adx, ady) + 1
     val selectedString = StringBuilder()
@@ -307,7 +380,6 @@ private fun checkSelection(x1: Int, y1: Int, x2: Int, y2: Int, engine: WordSearc
     if (wordsToFind.contains(s)) {
         onFound(s)
     } else {
-        // Also check reverse just in case the user selected end-to-start
         val reverseS = s.reversed()
         if (wordsToFind.contains(reverseS)) {
             onFound(reverseS)

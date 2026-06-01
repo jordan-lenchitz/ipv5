@@ -310,16 +310,8 @@ fun App() {
                     )
                     Divider()
                     val drawerScreens = listOf(
-                        Screen.About, Screen.Settings, Screen.Admin, Screen.Dev,
+                        Screen.WordSearch, Screen.About, Screen.Settings, Screen.Admin, Screen.Dev,
                         Screen.DevOps, Screen.FinOps, Screen.Splunk, Screen.Grafana,
-                        Screen.Ansible, Screen.B2BSaaS, Screen.Chaos, Screen.Pizza,
-                        Screen.HR, Screen.Lawyer, Screen.Marketing, Screen.Coffee,
-                        Screen.Weather, Screen.Stock, Screen.Astrology, Screen.History,
-                        Screen.Secret, Screen.BugTracker, Screen.Support, Screen.Compliance,
-                        Screen.Doc, Screen.Feedback, Screen.Sales, Screen.Infra,
-                        Screen.Database, Screen.ApiDocs, Screen.Telemetry, Screen.Void,
-                        Screen.QuantumCat, Screen.WordSearch
-                    )
                     LazyColumn {
                         items(drawerScreens) { screen ->
                             Row(
