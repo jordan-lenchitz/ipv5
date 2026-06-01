@@ -9,11 +9,9 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
@@ -149,7 +147,7 @@ fun WordSearchPanel() {
     val textColor = if (isAccessible) Color.Black else GlobalAppState.currentTextColor.value
     val font = FontFamily.Default // Sexy Dyslexia Friendly Font (Clean Sans-Serif)
 
-    val gridPositions = remember { mutableMapOf<Pair<Int, Int>, Pair<Offset, IntSize>>() }
+    var gridSizePx by remember { mutableStateOf(IntSize.Zero) }
 
     ChaoticPanel(title = "word search") {
         Column(
@@ -165,40 +163,46 @@ fun WordSearchPanel() {
             
             Spacer(Modifier.height(8.dp))
 
-            // The Grid with Drag Support
+            // The Grid with Robust Drag Support
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .pointerInput(engine) {
-                        detectDragGestures(
-                            onDragStart = { offset ->
-                                val cell = findCellAt(offset, gridPositions)
-                                selectedStart = cell
-                                selectedEnd = cell
-                            },
-                            onDrag = { change, _ ->
-                                val cell = findCellAt(change.position, gridPositions)
-                                if (cell != null) {
-                                    selectedEnd = cell
-                                }
-                            },
-                            onDragEnd = {
-                                if (selectedStart != null && selectedEnd != null) {
-                                    checkSelection(selectedStart!!, selectedEnd!!, engine, wordsToFind) { found ->
-                                        if (found != null) {
-                                            foundWords = foundWords + found
+                    .onSizeChanged { gridSizePx = it }
+                    .pointerInput(engine, gridSizePx) {
+                        if (gridSizePx.width > 0 && gridSizePx.height > 0) {
+                            val cellWidth = gridSizePx.width.toFloat() / gridSize
+                            val cellHeight = gridSizePx.height.toFloat() / gridSize
+                            
+                            detectDragGestures(
+                                onDragStart = { offset ->
+                                    val x = (offset.x / cellWidth).toInt().coerceIn(0 until gridSize)
+                                    val y = (offset.y / cellHeight).toInt().coerceIn(0 until gridSize)
+                                    selectedStart = x to y
+                                    selectedEnd = x to y
+                                },
+                                onDrag = { change, _ ->
+                                    val x = (change.position.x / cellWidth).toInt().coerceIn(0 until gridSize)
+                                    val y = (change.position.y / cellHeight).toInt().coerceIn(0 until gridSize)
+                                    selectedEnd = x to y
+                                },
+                                onDragEnd = {
+                                    if (selectedStart != null && selectedEnd != null) {
+                                        checkSelection(selectedStart!!, selectedEnd!!, engine, wordsToFind) { found ->
+                                            if (found != null) {
+                                                foundWords = foundWords + found
+                                            }
                                         }
                                     }
+                                    selectedStart = null
+                                    selectedEnd = null
+                                },
+                                onDragCancel = {
+                                    selectedStart = null
+                                    selectedEnd = null
                                 }
-                                selectedStart = null
-                                selectedEnd = null
-                            },
-                            onDragCancel = {
-                                selectedStart = null
-                                selectedEnd = null
-                            }
-                        )
+                            )
+                        }
                     }
             ) {
                 Column {
@@ -214,9 +218,6 @@ fun WordSearchPanel() {
                                         .weight(1f)
                                         .aspectRatio(1f)
                                         .padding(1.dp)
-                                        .onGloballyPositioned { coords ->
-                                            gridPositions[x to y] = coords.positionInParent() to coords.size
-                                        }
                                         .background(
                                             when {
                                                 isPartOfSelection -> Color.Yellow.copy(alpha = 0.5f)
@@ -298,17 +299,6 @@ fun WordSearchPanel() {
             }
         }
     }
-}
-
-private fun findCellAt(offset: Offset, positions: Map<Pair<Int, Int>, Pair<Offset, IntSize>>): Pair<Int, Int>? {
-    for ((cell, data) in positions) {
-        val (pos, size) = data
-        if (offset.x >= pos.x && offset.x <= pos.x + size.width &&
-            offset.y >= pos.y && offset.y <= pos.y + size.height) {
-            return cell
-        }
-    }
-    return null
 }
 
 private fun isCellInCurrentSelection(x: Int, y: Int, start: Pair<Int, Int>?, end: Pair<Int, Int>?): Boolean {
