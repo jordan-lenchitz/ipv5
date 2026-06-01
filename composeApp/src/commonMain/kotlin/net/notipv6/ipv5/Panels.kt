@@ -25,8 +25,8 @@ fun ChaoticPanel(
     title: String,
     content: @Composable () -> Unit
 ) {
-    val font = remember { GlobalAppState.getRandomFont() }
     val isAccessible = GlobalAppState.accessibilityMode.value
+    val font = if (isAccessible) FontFamily.Default else remember { GlobalAppState.getRandomFont() }
     val isIpv7 = GlobalAppState.ipv7Mode.value
     
     // Use session-persistent colors instead of local remember
