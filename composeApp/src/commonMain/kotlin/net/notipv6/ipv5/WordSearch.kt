@@ -140,7 +140,7 @@ fun WordSearchPanel() {
     val isIpv7 = GlobalAppState.ipv7Mode.value
     val isAccessible = GlobalAppState.accessibilityMode.value
     val textColor = GlobalAppState.currentTextColor.value
-    val font = if (isAccessible) FontFamily.Default else GlobalAppState.getRandomFont()
+    val font = FontFamily.Default // Sexy Dyslexia Friendly Font (Clean Sans-Serif)
 
     ChaoticPanel(title = "word search") {
         Column(
