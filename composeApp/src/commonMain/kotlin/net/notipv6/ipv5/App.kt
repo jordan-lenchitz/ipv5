@@ -340,7 +340,7 @@ fun App() {
                             ) {
                                 screen.icon()
                                 Spacer(Modifier.width(32.dp))
-                                Text(screen.label, fontFamily = GlobalAppState.getRandomFont())
+                                Text(screen.label, fontFamily = if(isAccessible) FontFamily.Default else GlobalAppState.getRandomFont())
                             }
                         }
                     }
@@ -1057,7 +1057,7 @@ fun DevScreen() {
         Spacer(Modifier.height(24.dp))
         
         Button(
-            onClick = { /* Force crash logic */ }, 
+            onClick = { throw NullPointerException("Chaos Mode NPE: Someone spilled coffee on the mainframe") },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
         ) {
@@ -1065,7 +1065,11 @@ fun DevScreen() {
         }
         Spacer(Modifier.height(8.dp))
         Button(
-            onClick = { /* Clear cache */ }, 
+            onClick = { 
+                GlobalAppState.refreshColors()
+                // Simulate cache vaporization by resetting some state
+                ip = IPv5Address.random()
+            },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF673AB7))
         ) {
@@ -1073,13 +1077,19 @@ fun DevScreen() {
         }
         Spacer(Modifier.height(8.dp))
         Button(
-            onClick = { /* Simulate drop */ }, 
+            onClick = { 
+                scope.launch {
+                    repeat(10) {
+                        GlobalAppState.refreshColors()
+                        delay(100)
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF5722))
         ) {
             Text("Simulate Solar Flare Interference", color = Color.White)
-        }
-        
+        }        
         Spacer(Modifier.height(32.dp))
         Text("Developer Logs:", style = MaterialTheme.typography.h6)
         Card(modifier = Modifier.fillMaxWidth().height(200.dp), backgroundColor = Color.DarkGray) {

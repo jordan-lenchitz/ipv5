@@ -78,6 +78,11 @@ class WordSearchEngine(val size: Int = 16) {
 fun WordSearchPanel() {
     val wordPool = remember {
         listOf(
+            // --- Alphanumeric & Network Identifiers ---
+            "1.1.1.1", "8.8.8.8", "127.0.0.1", "ipv4", "ipv6", "rfc791", "rfc2616", "rfc418", "rfc1149",
+            "404error", "500error", "200ok", "301moved", "0xdeadbeef", "0xcahebabe", "1337h4x0r",
+            "port80", "port443", "tcp22", "udp53", "802.11", "cat6", "rs232", "x86_64", "arm64",
+            "win32", "posix", "v6.0", "beta2", "build42", "node.js", "sha256", "md5", "bip39",
             // --- HTTP Status Codes: Standard 1xx ---
             "100continue", "101switchingprotocols", "102processing", "103earlyhints",
             // --- HTTP Status Codes: Standard 2xx ---
@@ -115,17 +120,13 @@ fun WordSearchPanel() {
             "783unexpectedtoken", "498invalidtoken", "499tokenrequired", "508resourcelimit",
             "529siteoverloaded", "530sitefrozen", "999requestdenied", "218thisisfine",
             "598readtimeout", "599connecttimeout",
-            // --- Alphanumeric & Network Identifiers ---
-            "1.1.1.1", "8.8.8.8", "127.0.0.1", "ipv4", "ipv6", "rfc791", "rfc2616", "rfc418", "rfc1149",
-            "1337h4x0r", "port80", "port443", "tcp22", "udp53", "802.11", "cat6", "rs232", "x86_64", "arm64",
-            "win32", "posix", "v6.0", "beta2", "build42", "node.js", "sha256", "md5", "bip39",
             // --- Core & Lore ---
             "ipv5", "chaos", "quantum", "packet", "subnet", "router", "switch", "network",
             "bridge", "protocol", "octet", "entropy", "logic", "drift", "flux", "buffer",
             "stack", "heap", "node", "link", "port", "dns", "mac", "ping", "trace", "sync",
             "mumps", "miis", "magic", "npr", "global", "pdp11", "pdp15", "vax", "decsystem",
             "meditech", "barnett", "pappalardo", "marble", "holenet", "maybebit", "vibe"
-        )
+        ).distinct()
     }
 
     var wordsToFind by remember { mutableStateOf(wordPool.shuffled().take(8)) }
