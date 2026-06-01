@@ -1067,8 +1067,6 @@ fun DevScreen() {
         Button(
             onClick = { 
                 GlobalAppState.refreshColors()
-                // Simulate cache vaporization by resetting some state
-                ip = IPv5Address.random()
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF673AB7))
