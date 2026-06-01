@@ -22,7 +22,8 @@
 - enjoy the chaos
 
 ## manual ios install (pre-built `iosApp.app`)
-- visit google dive link for .app tarball
+- [download](https://drive.google.com/file/d/1tYEvrT8OZZJVwid0V0swIj3QTSC949y3/view?usp=sharing) `.tar.gz` compressed archive of the ios app
+- plug in your ios device
 - use [`ios-deploy`](https://github.com/ios-control/ios-deploy) like this `ios-deploy --bundle /path/to/iosApp.app`
 - enjoy the chaos
 
