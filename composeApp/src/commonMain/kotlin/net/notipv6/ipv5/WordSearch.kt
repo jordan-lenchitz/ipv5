@@ -139,6 +139,7 @@ fun WordSearchPanel() {
     var foundWords by remember { mutableStateOf(setOf<String>()) }
     val isIpv7 = GlobalAppState.ipv7Mode.value
     val isAccessible = GlobalAppState.accessibilityMode.value
+    val foundColor = Color(0xFF4DB6AC) // Soul-soothing soft teal
     val textColor = GlobalAppState.currentTextColor.value
     val font = FontFamily.Default // Sexy Dyslexia Friendly Font (Clean Sans-Serif)
 
@@ -174,7 +175,7 @@ fun WordSearchPanel() {
                                         .background(
                                             when {
                                                 isSelected -> Color.Yellow.copy(alpha = 0.5f)
-                                                isPartOfFound -> Color.Green.copy(alpha = 0.4f)
+                                                isPartOfFound -> foundColor.copy(alpha = 0.4f)
                                                 else -> Color.Transparent
                                             },
                                             RoundedCornerShape(2.dp)
@@ -203,7 +204,7 @@ fun WordSearchPanel() {
                                         char.toString(),
                                         fontWeight = if (isPartOfFound) FontWeight.ExtraBold else FontWeight.Normal,
                                         fontSize = if (isIpv7) 16.sp else 12.sp,
-                                        color = if (isPartOfFound) Color.Green else textColor,
+                                        color = if (isPartOfFound) foundColor else textColor,
                                         fontFamily = font,
                                         modifier = if (isIpv7 && !isAccessible && Random.nextFloat() > 0.95f) Modifier.padding(Random.nextInt(2).dp) else Modifier
                                     )
@@ -228,7 +229,7 @@ fun WordSearchPanel() {
                             Text(
                                 word,
                                 fontSize = 10.sp,
-                                color = if (isFound) Color.Green else textColor.copy(alpha = 0.6f),
+                                color = if (isFound) foundColor else textColor.copy(alpha = 0.6f),
                                 fontFamily = font,
                                 style = if (isFound) MaterialTheme.typography.body2.copy(textDecoration = androidx.compose.ui.text.style.TextDecoration.LineThrough)
                                         else MaterialTheme.typography.body2
@@ -256,7 +257,7 @@ fun WordSearchPanel() {
                 Text(
                     "all codes found!".lowercase(),
                     modifier = Modifier.padding(top = 8.dp),
-                    color = Color.Green,
+                    color = foundColor,
                     fontWeight = FontWeight.Bold,
                     fontFamily = font,
                     fontSize = 12.sp
