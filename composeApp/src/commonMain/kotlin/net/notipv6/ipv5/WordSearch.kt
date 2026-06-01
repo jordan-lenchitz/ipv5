@@ -136,6 +136,8 @@ fun WordSearchPanel() {
     }
 
     var selectedStart by remember { mutableStateOf<Pair<Int, Int>?>(null) }
+    var foundWords by remember { mutableStateOf(setOf<String>()) }
+    val isIpv7 = GlobalAppState.ipv7Mode.value
     val isAccessible = GlobalAppState.accessibilityMode.value
     val textColor = if (isAccessible) Color.Black else GlobalAppState.currentTextColor.value
     val foundColor = Color(0xFF4DB6AC) // Soul-soothing soft teal
