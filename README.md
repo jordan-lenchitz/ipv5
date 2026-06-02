@@ -1,6 +1,6 @@
 `ipv5` is an app that does some sweet silly stuff please check it out!
 
-## manual android install
+## manual android install (build from source)
 - enable usb debugging on your android device
 - plug in your android device
 - git clone this repository
@@ -22,7 +22,9 @@
 - enjoy the chaos
 
 ## manual ios install (pre-built)
-- [download](https://drive.google.com/file/d/1tYEvrT8OZZJVwid0V0swIj3QTSC949y3/view?usp=sharing) `ipv5-ios.tar.gz` and extract it 
+- [download](https://drive.google.com/file/d/1tYEvrT8OZZJVwid0V0swIj3QTSC949y3/view?usp=sharing) `ipv5-ios.tar.gz`
+- verify that `sha256sum ipv5-ios.tar.gz` is `8f2e19347f16ba6187c6ce29a4da03aa717097f2410e2a6acdd216f733352c7f`
+- extract the `iosApp.app` archive from the tarball
 - plug in your ios device
 - use [`ios-deploy`](https://github.com/ios-control/ios-deploy) like this `ios-deploy --bundle /path/to/iosApp.app`
 - enjoy the chaos
