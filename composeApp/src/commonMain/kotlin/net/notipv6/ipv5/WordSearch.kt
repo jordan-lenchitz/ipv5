@@ -12,8 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -255,6 +258,14 @@ fun WordSearchPanel() {
                                 ) {
                                     Text(
                                         char.toString(),
+                                        style = TextStyle(
+                                            textAlign = TextAlign.Center,
+                                            platformStyle = PlatformTextStyle(includeFontPadding = false),
+                                            lineHeightStyle = LineHeightStyle(
+                                                alignment = LineHeightStyle.Alignment.Center,
+                                                trim = LineHeightStyle.Trim.Both
+                                            )
+                                        ),
                                         fontWeight = if (isPartOfFound || isPartOfSelection) FontWeight.ExtraBold else FontWeight.Normal,
                                         fontSize = adaptiveFontSize,
                                         color = when {
@@ -263,10 +274,9 @@ fun WordSearchPanel() {
                                             else -> textColor
                                         },
                                         fontFamily = font,
-                                        textAlign = TextAlign.Center,
                                         maxLines = 1,
                                         softWrap = false,
-                                        modifier = Modifier.fillMaxSize().wrapContentHeight(Alignment.CenterVertically)
+                                        modifier = Modifier.wrapContentSize(Alignment.Center)
                                     )
                                 }
                             }
