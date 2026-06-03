@@ -63,3 +63,7 @@ actual suspend fun resolveDns(domain: String): String? = withContext(Dispatchers
 }
 
 actual fun currentTimeMillis(): Long = (NSDate().timeIntervalSince1970 * 1000).toLong()
+
+actual fun exitApp() {
+    platform.posix.exit(0)
+}

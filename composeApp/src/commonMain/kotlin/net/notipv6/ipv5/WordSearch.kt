@@ -2,6 +2,7 @@ package net.notipv6.ipv5
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -82,7 +83,7 @@ class WordSearchEngine(val size: Int = 16) {
 }
 
 @Composable
-fun WordSearchPanel() {
+fun WordSearchPanel(onCloseApp: () -> Unit = { exitApp() }) {
     val wordPool = remember {
         listOf(
             // --- Alphanumeric & Network Identifiers ---
@@ -148,6 +149,8 @@ fun WordSearchPanel() {
     var selectedStart by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var selectedEnd by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var foundWords by remember { mutableStateOf(setOf<String>()) }
+    var showVictoryDialog by remember { mutableStateOf(false) }
+    var debugClickCount by remember { mutableStateOf(0) }
     val isAccessible = GlobalAppState.accessibilityMode.value
     val foundColor = Color(0xFF4DB6AC) // Soul-soothing soft teal
     val textColor = if (isAccessible) Color.Black else GlobalAppState.currentTextColor.value
@@ -165,7 +168,14 @@ fun WordSearchPanel() {
                 "find ${wordsToFind.size - foundWords.size} more codes | $statusText".lowercase(),
                 style = MaterialTheme.typography.subtitle2,
                 color = textColor.copy(alpha = 0.7f),
-                fontFamily = font
+                fontFamily = font,
+                modifier = Modifier.clickable {
+                    debugClickCount++
+                    if (debugClickCount >= 5) {
+                        showVictoryDialog = true
+                        debugClickCount = 0
+                    }
+                }
             )
             
             Spacer(Modifier.height(8.dp))
@@ -213,7 +223,11 @@ fun WordSearchPanel() {
                                     if (selectedStart != null && selectedEnd != null) {
                                         checkSelection(selectedStart!!, selectedEnd!!, engine, wordsToFind) { found ->
                                             if (found != null) {
-                                                foundWords = foundWords + found
+                                                val newFound = foundWords + found
+                                                foundWords = newFound
+                                                if (newFound.size == wordsToFind.size) {
+                                                    showVictoryDialog = true
+                                                }
                                             }
                                         }
                                     }
@@ -317,6 +331,7 @@ fun WordSearchPanel() {
                     foundWords = emptySet()
                     selectedStart = null
                     selectedEnd = null
+                    showVictoryDialog = false
                 },
                 modifier = Modifier.height(36.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
@@ -324,14 +339,31 @@ fun WordSearchPanel() {
                 Text("re-scramble".lowercase(), color = Color.White, fontFamily = font, fontSize = 12.sp)
             }
             
-            if (foundWords.size == wordsToFind.size) {
-                Text(
-                    "all codes found!".lowercase(),
-                    modifier = Modifier.padding(top = 8.dp),
-                    color = foundColor,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = font,
-                    fontSize = 12.sp
+            if (showVictoryDialog) {
+                AlertDialog(
+                    onDismissRequest = { showVictoryDialog = false },
+                    title = { Text("SUCCESS! 👏", fontFamily = font, fontWeight = FontWeight.Bold) },
+                    text = { Text("all protocol codes have been verified and settled.", fontFamily = font) },
+                    confirmButton = {
+                        Button(onClick = {
+                            wordsToFind = wordPool.shuffled().take(8)
+                            foundWords = emptySet()
+                            showVictoryDialog = false
+                        }) {
+                            Text("new scramble".lowercase(), fontFamily = font)
+                        }
+                    },
+                    dismissButton = {
+                        Row {
+                            TextButton(onClick = onCloseApp) {
+                                Text("close app".lowercase(), fontFamily = font, color = Color.Red)
+                            }
+                            Spacer(Modifier.width(8.dp))
+                            TextButton(onClick = { showVictoryDialog = false }) {
+                                Text("just admire".lowercase(), fontFamily = font)
+                            }
+                        }
+                    }
                 )
             }
         }

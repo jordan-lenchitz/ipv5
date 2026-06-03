@@ -45,3 +45,7 @@ actual suspend fun resolveDns(domain: String): String? = withContext(Dispatchers
 }
 
 actual fun currentTimeMillis(): Long = System.currentTimeMillis()
+
+actual fun exitApp() {
+    kotlin.system.exitProcess(0)
+}
