@@ -169,13 +169,19 @@ fun WordSearchPanel() {
 
             // Adaptive UI constants for high-density grids
             val adaptivePadding = when {
-                gridSize > 22 -> 0.5.dp
+                gridSize > 24 -> 0.dp
+                gridSize > 20 -> 0.5.dp
                 gridSize > 18 -> 1.dp
                 else -> 2.dp
             }
-            val adaptiveCorner = if (gridSize > 20) 1.dp else 4.dp
+            val adaptiveCorner = when {
+                gridSize > 24 -> 0.dp
+                gridSize > 20 -> 1.dp
+                else -> 4.dp
+            }
             val baseFontSize = if (isIpv7) 18 else 14
-            val adaptiveFontSize = (baseFontSize * 16 / gridSize).coerceAtLeast(9).sp
+            // More aggressive scaling: base * (target_grid / current_grid)
+            val adaptiveFontSize = (baseFontSize.toFloat() * 15f / gridSize.toFloat()).coerceAtLeast(8f).sp
 
             // The Grid with Robust Drag Support
             Box(
@@ -241,7 +247,7 @@ fun WordSearchPanel() {
                                             RoundedCornerShape(adaptiveCorner)
                                         )
                                         .border(
-                                            0.5.dp, 
+                                            if (gridSize > 24) 0.1.dp else 0.5.dp, 
                                             if (isPartOfSelection) Color.Yellow else textColor.copy(alpha = 0.1f), 
                                             RoundedCornerShape(adaptiveCorner)
                                         ),
@@ -257,7 +263,9 @@ fun WordSearchPanel() {
                                             else -> textColor
                                         },
                                         fontFamily = font,
-                                        modifier = if (isIpv7 && !isAccessible && Random.nextFloat() > 0.95f) Modifier.padding(Random.nextInt(1).dp) else Modifier
+                                        maxLines = 1,
+                                        softWrap = false,
+                                        modifier = if (isIpv7 && !isAccessible && gridSize < 20 && Random.nextFloat() > 0.95f) Modifier.padding(Random.nextInt(1).dp) else Modifier
                                     )
                                 }
                             }
