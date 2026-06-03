@@ -133,8 +133,11 @@ fun WordSearchPanel() {
     }
 
     var wordsToFind by remember { mutableStateOf(wordPool.shuffled().take(8)) }
-    val gridSize = 16
-    val engine = remember(wordsToFind) {
+    // IPv5 Jumboframes: Dynamic grid sizing to accommodate excessively long protocol headers
+    val gridSize = remember(wordsToFind) {
+        (wordsToFind.maxOfOrNull { it.length } ?: 16).coerceAtLeast(16)
+    }
+    val engine = remember(wordsToFind, gridSize) {
         WordSearchEngine(gridSize).apply { generate(wordsToFind) }
     }
 
@@ -155,7 +158,7 @@ fun WordSearchPanel() {
             modifier = Modifier.fillMaxWidth().padding(4.dp)
         ) {
             Text(
-                "find ${wordsToFind.size - foundWords.size} more codes".lowercase(),
+                "find ${wordsToFind.size - foundWords.size} more codes${if (gridSize > 16) " (jumboframe active)" else ""}".lowercase(),
                 style = MaterialTheme.typography.subtitle1,
                 color = textColor,
                 fontFamily = font
@@ -169,7 +172,7 @@ fun WordSearchPanel() {
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .onSizeChanged { gridSizePx = it }
-                    .pointerInput(engine, gridSizePx) {
+                    .pointerInput(engine, gridSizePx, gridSize) {
                         if (gridSizePx.width > 0 && gridSizePx.height > 0) {
                             val cellWidth = gridSizePx.width.toFloat() / gridSize
                             val cellHeight = gridSizePx.height.toFloat() / gridSize
@@ -217,27 +220,31 @@ fun WordSearchPanel() {
                                     modifier = Modifier
                                         .weight(1f)
                                         .aspectRatio(1f)
-                                        .padding(1.dp)
+                                        .padding(2.dp) // Fat-finger buffer
                                         .background(
                                             when {
-                                                isPartOfSelection -> Color.Yellow.copy(alpha = 0.5f)
+                                                isPartOfSelection -> Color.Yellow.copy(alpha = 0.7f) // Brighter for feedback
                                                 isPartOfFound -> foundColor.copy(alpha = 0.4f)
                                                 else -> Color.Transparent
                                             },
-                                            RoundedCornerShape(2.dp)
+                                            RoundedCornerShape(4.dp)
                                         )
                                         .border(
                                             0.5.dp, 
-                                            textColor.copy(alpha = 0.1f), 
-                                            RoundedCornerShape(2.dp)
+                                            if (isPartOfSelection) Color.Yellow else textColor.copy(alpha = 0.1f), 
+                                            RoundedCornerShape(4.dp)
                                         ),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         char.toString(),
-                                        fontWeight = if (isPartOfFound) FontWeight.ExtraBold else FontWeight.Normal,
-                                        fontSize = if (isIpv7) 16.sp else 12.sp,
-                                        color = if (isPartOfFound) foundColor else textColor,
+                                        fontWeight = if (isPartOfFound || isPartOfSelection) FontWeight.ExtraBold else FontWeight.Normal,
+                                        fontSize = if (isIpv7) 18.sp else 14.sp, // Slightly larger for readability
+                                        color = when {
+                                            isPartOfSelection -> Color.Black
+                                            isPartOfFound -> foundColor
+                                            else -> textColor
+                                        },
                                         fontFamily = font,
                                         modifier = if (isIpv7 && !isAccessible && Random.nextFloat() > 0.95f) Modifier.padding(Random.nextInt(2).dp) else Modifier
                                     )
