@@ -157,14 +157,25 @@ fun WordSearchPanel() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().padding(4.dp)
         ) {
+            val statusText = if (gridSize > 16) "mtu: $gridSize (jumbo)" else "mtu: 1500"
             Text(
-                "find ${wordsToFind.size - foundWords.size} more codes${if (gridSize > 16) " (jumboframe active)" else ""}".lowercase(),
-                style = MaterialTheme.typography.subtitle1,
-                color = textColor,
+                "find ${wordsToFind.size - foundWords.size} more codes | $statusText".lowercase(),
+                style = MaterialTheme.typography.subtitle2,
+                color = textColor.copy(alpha = 0.7f),
                 fontFamily = font
             )
             
             Spacer(Modifier.height(8.dp))
+
+            // Adaptive UI constants for high-density grids
+            val adaptivePadding = when {
+                gridSize > 22 -> 0.5.dp
+                gridSize > 18 -> 1.dp
+                else -> 2.dp
+            }
+            val adaptiveCorner = if (gridSize > 20) 1.dp else 4.dp
+            val baseFontSize = if (isIpv7) 18 else 14
+            val adaptiveFontSize = (baseFontSize * 16 / gridSize).coerceAtLeast(9).sp
 
             // The Grid with Robust Drag Support
             Box(
@@ -220,33 +231,33 @@ fun WordSearchPanel() {
                                     modifier = Modifier
                                         .weight(1f)
                                         .aspectRatio(1f)
-                                        .padding(2.dp) // Fat-finger buffer
+                                        .padding(adaptivePadding)
                                         .background(
                                             when {
-                                                isPartOfSelection -> Color.Yellow.copy(alpha = 0.7f) // Brighter for feedback
+                                                isPartOfSelection -> Color.Yellow.copy(alpha = 0.7f)
                                                 isPartOfFound -> foundColor.copy(alpha = 0.4f)
                                                 else -> Color.Transparent
                                             },
-                                            RoundedCornerShape(4.dp)
+                                            RoundedCornerShape(adaptiveCorner)
                                         )
                                         .border(
                                             0.5.dp, 
                                             if (isPartOfSelection) Color.Yellow else textColor.copy(alpha = 0.1f), 
-                                            RoundedCornerShape(4.dp)
+                                            RoundedCornerShape(adaptiveCorner)
                                         ),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         char.toString(),
                                         fontWeight = if (isPartOfFound || isPartOfSelection) FontWeight.ExtraBold else FontWeight.Normal,
-                                        fontSize = if (isIpv7) 18.sp else 14.sp, // Slightly larger for readability
+                                        fontSize = adaptiveFontSize,
                                         color = when {
                                             isPartOfSelection -> Color.Black
                                             isPartOfFound -> foundColor
                                             else -> textColor
                                         },
                                         fontFamily = font,
-                                        modifier = if (isIpv7 && !isAccessible && Random.nextFloat() > 0.95f) Modifier.padding(Random.nextInt(2).dp) else Modifier
+                                        modifier = if (isIpv7 && !isAccessible && Random.nextFloat() > 0.95f) Modifier.padding(Random.nextInt(1).dp) else Modifier
                                     )
                                 }
                             }
