@@ -144,7 +144,6 @@ fun WordSearchPanel() {
     var selectedStart by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var selectedEnd by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var foundWords by remember { mutableStateOf(setOf<String>()) }
-    val isIpv7 = GlobalAppState.ipv7Mode.value
     val isAccessible = GlobalAppState.accessibilityMode.value
     val foundColor = Color(0xFF4DB6AC) // Soul-soothing soft teal
     val textColor = if (isAccessible) Color.Black else GlobalAppState.currentTextColor.value
@@ -179,7 +178,7 @@ fun WordSearchPanel() {
                 gridSize > 20 -> 1.dp
                 else -> 4.dp
             }
-            val baseFontSize = if (isIpv7) 18 else 14
+            val baseFontSize = 14
             // More aggressive scaling: base * (target_grid / current_grid)
             val adaptiveFontSize = (baseFontSize.toFloat() * 15f / gridSize.toFloat()).coerceAtLeast(8f).sp
 
@@ -263,9 +262,10 @@ fun WordSearchPanel() {
                                             else -> textColor
                                         },
                                         fontFamily = font,
+                                        textAlign = TextAlign.Center,
                                         maxLines = 1,
                                         softWrap = false,
-                                        modifier = if (isIpv7 && !isAccessible && gridSize < 20 && Random.nextFloat() > 0.95f) Modifier.padding(Random.nextInt(1).dp) else Modifier
+                                        modifier = Modifier.fillMaxSize().wrapContentHeight(Alignment.CenterVertically)
                                     )
                                 }
                             }
@@ -308,7 +308,7 @@ fun WordSearchPanel() {
                     selectedEnd = null
                 },
                 modifier = Modifier.height(36.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = if (isIpv7) Color.Red else Color(0xFF6200EE))
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
             ) {
                 Text("re-scramble".lowercase(), color = Color.White, fontFamily = font, fontSize = 12.sp)
             }
@@ -401,6 +401,10 @@ private fun checkSelection(start: Pair<Int, Int>, end: Pair<Int, Int>, engine: W
             onFound(reverseS)
         } else {
             onFound(null)
+        }
+    }
+}
+      onFound(null)
         }
     }
 }
