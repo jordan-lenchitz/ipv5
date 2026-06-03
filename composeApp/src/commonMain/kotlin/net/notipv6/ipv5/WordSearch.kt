@@ -349,15 +349,24 @@ fun WordSearchPanel(onCloseApp: () -> Unit = { exitApp() }) {
             if (showVictoryDialog) {
                 AlertDialog(
                     onDismissRequest = { showVictoryDialog = false },
-                    title = { Text("SUCCESS! 👏", fontFamily = font, fontWeight = FontWeight.Bold) },
-                    text = { Text("all protocol codes have been verified and settled.", fontFamily = font) },
+                    title = { Text("SUCCESS! 👏", color = textColor, fontFamily = font, fontWeight = FontWeight.Bold) },
+                    text = { Text("all protocol codes have been verified and settled.", color = textColor.copy(alpha = 0.8f), fontFamily = font) },
                     confirmButton = {
-                        Button(onClick = {
-                            wordsToFind = wordPool.shuffled().take(8)
-                            foundWords = emptySet()
-                            showVictoryDialog = false
-                        }) {
-                            Text("new scramble".lowercase(), fontFamily = font)
+                        Button(
+                            onClick = {
+                                wordsToFind = wordPool.shuffled().take(8)
+                                foundWords = emptySet()
+                                showVictoryDialog = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = if (isAccessible) Color.White else Color(0xFF6200EE)
+                            )
+                        ) {
+                            Text(
+                                "new scramble".lowercase(), 
+                                color = if (isAccessible) Color.Black else Color.White,
+                                fontFamily = font
+                            )
                         }
                     },
                     dismissButton = {
@@ -367,7 +376,11 @@ fun WordSearchPanel(onCloseApp: () -> Unit = { exitApp() }) {
                             }
                             Spacer(Modifier.width(8.dp))
                             TextButton(onClick = { showVictoryDialog = false }) {
-                                Text("just admire".lowercase(), fontFamily = font)
+                                Text(
+                                    "just admire".lowercase(), 
+                                    fontFamily = font, 
+                                    color = if (isAccessible) Color.Black else textColor.copy(alpha = 0.7f)
+                                )
                             }
                         }
                     }
