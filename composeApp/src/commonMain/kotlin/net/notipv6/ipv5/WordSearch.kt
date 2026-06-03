@@ -334,9 +334,16 @@ fun WordSearchPanel(onCloseApp: () -> Unit = { exitApp() }) {
                     showVictoryDialog = false
                 },
                 modifier = Modifier.height(36.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isAccessible) Color.White else Color(0xFF6200EE)
+                )
             ) {
-                Text("re-scramble".lowercase(), color = Color.White, fontFamily = font, fontSize = 12.sp)
+                Text(
+                    "re-scramble".lowercase(), 
+                    color = if (isAccessible) Color.Black else Color.White, 
+                    fontFamily = font, 
+                    fontSize = 12.sp
+                )
             }
             
             if (showVictoryDialog) {
