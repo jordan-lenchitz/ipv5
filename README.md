@@ -9,8 +9,8 @@
 - enjoy the chaos
 
 ## google play android install (signed aab)
-- email `sudo at jordanlenchitz dot org` to get on the list (currently `closed testing` on the google play side)
-- visit `https://play.google.com/store/apps/details?id=net.notipv6.ipv5` to download to your android 7+ device
+- email `sudo at jordanlenchitz dot org` to get on the google play `closed testing` list
+- visit `https://play.google.com/store/apps/details?id=net.notipv6.ipv5` on your android 7+ device
 - enjoy the chaos
 
 ## manual ios install (build from source)
