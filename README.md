@@ -30,6 +30,3 @@
 - plug in your ios device
 - use [`ios-deploy`](https://github.com/ios-control/ios-deploy) like this `ios-deploy --bundle /path/to/iosApp.app`
 - enjoy the chaos
-
-### apple app store ios install
-coming soon!
