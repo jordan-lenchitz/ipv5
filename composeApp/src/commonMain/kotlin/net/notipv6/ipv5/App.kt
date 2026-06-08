@@ -254,9 +254,41 @@ fun App() {
     val isAccessible = GlobalAppState.accessibilityMode.value
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+
+    val drawerScreens = remember {
+        mutableStateOf(
+            listOf(
+                Screen.WordSearch, Screen.About, Screen.Dev,
+                Screen.Settings, Screen.Admin, Screen.DevOps, Screen.FinOps, Screen.Splunk,
+                Screen.Grafana, Screen.Ansible, Screen.B2BSaaS, Screen.Chaos, Screen.Pizza,
+                Screen.HR, Screen.Lawyer, Screen.Marketing, Screen.Coffee,
+                Screen.Weather, Screen.Stock, Screen.Astrology, Screen.History,
+                Screen.Secret, Screen.BugTracker, Screen.Support, Screen.Compliance,
+                Screen.Doc, Screen.Feedback, Screen.Sales, Screen.Infra,
+                Screen.Database, Screen.ApiDocs, Screen.Telemetry,
+                Screen.Void, Screen.QuantumCat
+            )
+        )
+    }
+
+    fun randomizeScreens() {
+        val top3 = listOf(Screen.WordSearch, Screen.About, Screen.Dev)
+        val bottom2 = listOf(Screen.Void, Screen.QuantumCat)
+        val others = listOf(
+            Screen.Settings, Screen.Admin, Screen.DevOps, Screen.FinOps, Screen.Splunk,
+            Screen.Grafana, Screen.Ansible, Screen.B2BSaaS, Screen.Chaos, Screen.Pizza,
+            Screen.HR, Screen.Lawyer, Screen.Marketing, Screen.Coffee,
+            Screen.Weather, Screen.Stock, Screen.Astrology, Screen.History,
+            Screen.Secret, Screen.BugTracker, Screen.Support, Screen.Compliance,
+            Screen.Doc, Screen.Feedback, Screen.Sales, Screen.Infra,
+            Screen.Database, Screen.ApiDocs, Screen.Telemetry
+        ).shuffled()
+        drawerScreens.value = top3 + others + bottom2
+    }
     
     LaunchedEffect(Unit) {
         GlobalAppState.refreshColors()
+        randomizeScreens()
     }
     
     val bgColor = if (isAccessible) Color.White else GlobalAppState.currentBgColor.value
@@ -290,6 +322,7 @@ fun App() {
                                 if (wasAccessible) {
                                     GlobalAppState.refreshColors()
                                 }
+                                randomizeScreens()
                             }) {
                                 Text("accessible", color = textColor)
                             }
@@ -309,19 +342,9 @@ fun App() {
                         fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default
                     )
                     Divider()
-                    val drawerScreens = listOf(
-                        Screen.WordSearch, Screen.About, Screen.Settings, Screen.Admin, Screen.Dev,
-                        Screen.DevOps, Screen.FinOps, Screen.Splunk, Screen.Grafana,
-                        Screen.Ansible, Screen.B2BSaaS, Screen.Chaos, Screen.Pizza,
-                        Screen.HR, Screen.Lawyer, Screen.Marketing, Screen.Coffee,
-                        Screen.Weather, Screen.Stock, Screen.Astrology, Screen.History,
-                        Screen.Secret, Screen.BugTracker, Screen.Support, Screen.Compliance,
-                        Screen.Doc, Screen.Feedback, Screen.Sales, Screen.Infra,
-                        Screen.Database, Screen.ApiDocs, Screen.Telemetry, Screen.Void,
-                        Screen.QuantumCat
-                    )
+                    
                     LazyColumn {
-                        items(drawerScreens) { screen ->
+                        items(drawerScreens.value) { screen ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
