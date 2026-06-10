@@ -1,7 +1,9 @@
 ipv5 collects no personal information
 
-we grab your android's emitted ip address once
+we query your emitted ip address once
 
-this is used purely for the features of the app and we do not store nor share it with anyone
+we do not store nor share it with anyone ever
 
-if you have any concerns please smtp to sudo at jordanlenchitz dot org
+if you have any concerns please 
+
+smtp to sudo at jordanlenchitz dot org
