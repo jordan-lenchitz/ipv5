@@ -1,9 +1,9 @@
 ipv5 collects no personal information
 
-we query your emitted ip address once
+we query your device for emitted ip address
 
-we do not store nor share it with anyone ever
+we never store it nor share it 
 
-if you have any concerns please 
+questions/concerns please smtp
 
-smtp to sudo at jordanlenchitz dot org
+sudo at jordanlenchitz dot org
