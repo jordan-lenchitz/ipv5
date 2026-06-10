@@ -202,9 +202,9 @@ fun DnsRoulettePlayground() {
             contentAlignment = Alignment.Center
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                val center = size / 2f
+                val centerOffset = androidx.compose.ui.geometry.Offset(size.width / 2f, size.height / 2f)
                 val radius = size.minDimension / 2f
-                drawCircle(color = textC, radius = 6f, center = center)
+                drawCircle(color = textC, radius = 6f, center = centerOffset)
             }
             Text("🎰", fontSize = 48.sp)
         }
