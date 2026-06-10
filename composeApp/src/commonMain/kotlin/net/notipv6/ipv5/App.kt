@@ -33,6 +33,9 @@ import kotlin.random.Random
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.animation.*
 
 sealed class Screen {
     abstract val route: String
@@ -255,6 +258,9 @@ fun App() {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
+    var isRightDrawerOpen by remember { mutableStateOf(false) }
+    var selectedFeature by remember { mutableStateOf<InteractiveFeature?>(null) }
+
     val drawerScreens = remember {
         mutableStateOf(
             listOf(
@@ -304,158 +310,282 @@ fun App() {
             onSurface = textColor
         )
     ) {
-        Scaffold(
-            scaffoldState = scaffoldState,
-            topBar = {
-                Surface(color = navColor, elevation = AppBarDefaults.TopAppBarElevation) {
-                    TopAppBar(
-                        title = { Text("ipv5 ${if(isIpv7) "chaos" else "manager"}", color = textColor) },
-                        navigationIcon = {
-                            IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
-                                Icon(Icons.Default.Menu, contentDescription = "menu", tint = textColor)
-                            }
-                        },
-                        actions = {
-                            TextButton(onClick = { 
-                                val wasAccessible = GlobalAppState.accessibilityMode.value
-                                GlobalAppState.accessibilityMode.value = !wasAccessible
-                                if (wasAccessible) {
-                                    GlobalAppState.refreshColors()
+        Box(modifier = Modifier.fillMaxSize()) {
+            Scaffold(
+                scaffoldState = scaffoldState,
+                topBar = {
+                    Surface(color = navColor, elevation = AppBarDefaults.TopAppBarElevation) {
+                        TopAppBar(
+                            title = { Text("ipv5 ${if(isIpv7) "chaos" else "manager"}", color = textColor) },
+                            navigationIcon = {
+                                IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
+                                    Icon(Icons.Default.Menu, contentDescription = "menu", tint = textColor)
                                 }
-                                randomizeScreens()
-                            }) {
-                                Text("accessible", color = textColor)
+                            },
+                            actions = {
+                                TextButton(onClick = { 
+                                    val wasAccessible = GlobalAppState.accessibilityMode.value
+                                    GlobalAppState.accessibilityMode.value = !wasAccessible
+                                    if (wasAccessible) {
+                                        GlobalAppState.refreshColors()
+                                    }
+                                    randomizeScreens()
+                                }) {
+                                    Text("accessible", color = textColor)
+                                }
+                            },
+                            backgroundColor = Color.Transparent,
+                            elevation = 0.dp,
+                            modifier = Modifier.statusBarsPadding()
+                        )
+                    }
+                },
+                drawerContent = {
+                    Column(modifier = Modifier.fillMaxSize().background(color = bgColor)) {
+                        Text(
+                            "systems and as operations", 
+                            modifier = Modifier.padding(16.dp), 
+                            style = MaterialTheme.typography.h6,
+                            fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default
+                        )
+                        Divider()
+                        
+                        LazyColumn {
+                            items(drawerScreens.value) { screen ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            scope.launch {
+                                                if (isIpv7) delay(2000)
+                                                navController.navigate(screen.route) {
+                                                    popUpTo(Screen.Dashboard.route)
+                                                    launchSingleTop = true
+                                                }
+                                                scaffoldState.drawerState.close()
+                                            }
+                                        }
+                                        .padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    screen.icon()
+                                    Spacer(Modifier.width(32.dp))
+                                    Text(screen.label, fontFamily = if(isAccessible) FontFamily.Default else GlobalAppState.getRandomFont())
+                                }
                             }
-                        },
-                        backgroundColor = Color.Transparent,
-                        elevation = 0.dp,
-                        modifier = Modifier.statusBarsPadding()
-                    )
-                }
-            },
-            drawerContent = {
-                Column(modifier = Modifier.fillMaxSize().background(color = bgColor)) {
-                    Text(
-                        "systems and as operations", 
-                        modifier = Modifier.padding(16.dp), 
-                        style = MaterialTheme.typography.h6,
-                        fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default
-                    )
-                    Divider()
-                    
-                    LazyColumn {
-                        items(drawerScreens.value) { screen ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
+                        }
+                    }
+                },
+                bottomBar = {
+                    Surface(color = navColor, elevation = BottomNavigationDefaults.Elevation) {
+                        BottomNavigation(
+                            backgroundColor = Color.Transparent,
+                            elevation = 0.dp,
+                            modifier = Modifier.navigationBarsPadding()
+                        ) {
+                            val navBackStackEntry by navController.currentBackStackEntryAsState()
+                            val currentRoute = navBackStackEntry?.destination?.route
+                            val screens = listOf(Screen.Dashboard, Screen.Security, Screen.Predictor, Screen.Ping, Screen.DNS, Screen.IPv7, Screen.More)
+                            
+                            screens.forEach { screen ->
+                                val isSelected = if (screen == Screen.More) isRightDrawerOpen else currentRoute == screen.route
+                                BottomNavigationItem(
+                                    icon = screen.icon,
+                                    label = { Text(screen.label, fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default) },
+                                    selected = isSelected,
+                                    onClick = {
                                         scope.launch {
                                             if (isIpv7) delay(2000)
-                                            navController.navigate(screen.route) {
-                                                popUpTo(Screen.Dashboard.route)
-                                                launchSingleTop = true
+                                            if (screen == Screen.More) {
+                                                isRightDrawerOpen = true
+                                            } else {
+                                                navController.navigate(screen.route) {
+                                                    popUpTo(Screen.Dashboard.route)
+                                                    launchSingleTop = true
+                                                }
                                             }
-                                            scaffoldState.drawerState.close()
                                         }
                                     }
-                                    .padding(16.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                screen.icon()
-                                Spacer(Modifier.width(32.dp))
-                                Text(screen.label, fontFamily = if(isAccessible) FontFamily.Default else GlobalAppState.getRandomFont())
+                                )
                             }
                         }
                     }
                 }
-            },
-            bottomBar = {
-                Surface(color = navColor, elevation = BottomNavigationDefaults.Elevation) {
-                    BottomNavigation(
-                        backgroundColor = Color.Transparent,
-                        elevation = 0.dp,
-                        modifier = Modifier.navigationBarsPadding()
-                    ) {
-                        val navBackStackEntry by navController.currentBackStackEntryAsState()
-                        val currentRoute = navBackStackEntry?.destination?.route
-                        val screens = listOf(Screen.Dashboard, Screen.Security, Screen.Predictor, Screen.Ping, Screen.DNS, Screen.IPv7, Screen.More)
+            ) { innerPadding ->
+                val contentOffset = remember { Animatable(0f) }
+                LaunchedEffect(isIpv7) {
+                    if (isIpv7) {
+                        while(true) {
+                            contentOffset.animateTo(15f, animationSpec = tween(10000))
+                            contentOffset.animateTo(-15f, animationSpec = tween(10000))
+                        }
+                    } else {
+                        contentOffset.animateTo(0f)
+                    }
+                }
+                Box(modifier = Modifier.padding(innerPadding).fillMaxSize().offset(y = contentOffset.value.dp).background(color = bgColor)) {
+                    NavHost(navController, startDestination = Screen.Dashboard.route) {
+                        composable(Screen.Dashboard.route) { DashboardScreen() }
+                        composable(Screen.Security.route) { SecurityScreen() }
+                        composable(Screen.Predictor.route) { PredictorScreen() }
+                        composable(Screen.Ping.route) { PingScreen() }
+                        composable(Screen.DNS.route) { DnsScreen() }
+                        composable(Screen.IPv7.route) { Ipv7Screen() }
+                        composable(Screen.More.route) { MoreFeaturesScreen() }
                         
-                        screens.forEach { screen ->
-                            BottomNavigationItem(
-                                icon = screen.icon,
-                                label = { Text(screen.label, fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default) },
-                                selected = currentRoute == screen.route,
-                                onClick = {
-                                    scope.launch {
-                                        if (isIpv7) delay(2000)
-                                        navController.navigate(screen.route) {
-                                            popUpTo(Screen.Dashboard.route)
-                                            launchSingleTop = true
-                                         }
+                        composable(Screen.About.route) { AboutScreen() }
+                        composable(Screen.Settings.route) { SettingsScreen() }
+                        composable(Screen.Admin.route) { AdminScreen() }
+                        composable(Screen.Dev.route) { DevScreen() }
+                        
+                        composable(Screen.DevOps.route) { DevOpsPanel() }
+                        composable(Screen.FinOps.route) { FinOpsPanel() }
+                        composable(Screen.Splunk.route) { SplunkPanel() }
+                        composable(Screen.Grafana.route) { GrafanaPanel() }
+                        composable(Screen.Ansible.route) { AnsiblePanel() }
+                        composable(Screen.B2BSaaS.route) { B2BSaaSPanel() }
+                        composable(Screen.Chaos.route) { ChaosPanel() }
+                        composable(Screen.Pizza.route) { PizzaTrackerPanel() }
+                        composable(Screen.HR.route) { HRPanel() }
+                        composable(Screen.Lawyer.route) { LawyerPanel() }
+                        composable(Screen.Marketing.route) { MarketingPanel() }
+                        composable(Screen.Coffee.route) { CoffeePanel() }
+                        composable(Screen.Weather.route) { WeatherPanel() }
+                        composable(Screen.Stock.route) { StockPanel() }
+                        composable(Screen.Astrology.route) { AstrologyPanel() }
+                        composable(Screen.History.route) { HistoryPanel() }
+                        composable(Screen.Secret.route) { SecretPanel() }
+                        composable(Screen.BugTracker.route) { BugTrackerPanel() }
+                        composable(Screen.Support.route) { SupportPanel() }
+                        composable(Screen.Compliance.route) { CompliancePanel() }
+                        composable(Screen.Doc.route) { DocPanel() }
+                        composable(Screen.Feedback.route) { FeedbackPanel() }
+                        composable(Screen.Sales.route) { SalesPanel() }
+                        composable(Screen.Infra.route) { InfraPanel() }
+                        composable(Screen.Database.route) { DatabasePanel() }
+                        composable(Screen.ApiDocs.route) { ApiDocsPanel() }
+                        composable(Screen.Telemetry.route) { TelemetryPanel() }
+                        composable(Screen.Void.route) { VoidPanel() }
+                        composable(Screen.QuantumCat.route) { QuantumCatPanel() }
+                        composable(Screen.WordSearch.route) { WordSearchPanel() }
+                    }
+                }
+            }
+
+            // Sliding Right Drawer (Full Screen Width)
+            AnimatedVisibility(
+                visible = isRightDrawerOpen,
+                enter = slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(300)),
+                exit = slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(300))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = bgColor)
+                        .clickable(enabled = false) {} // block clicks below
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .statusBarsPadding()
+                            .navigationBarsPadding()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = { isRightDrawerOpen = false }) {
+                                Icon(Icons.Default.Close, contentDescription = "close", tint = textColor)
+                            }
+                            Spacer(Modifier.width(16.dp))
+                            Text(
+                                "the esoteric toolset (36)",
+                                style = MaterialTheme.typography.h5,
+                                color = textColor,
+                                fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default
+                            )
+                        }
+                        Divider(color = textColor.copy(alpha = 0.2f))
+                        LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                            items(MoreFeaturesInteractive.list) { feature ->
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 6.dp)
+                                        .clickable {
+                                            selectedFeature = feature
+                                        },
+                                    elevation = 4.dp,
+                                    backgroundColor = navColor
+                                ) {
+                                    Column(modifier = Modifier.padding(16.dp)) {
+                                        Text(
+                                            feature.name,
+                                            fontWeight = FontWeight.Bold,
+                                            color = textColor,
+                                            fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
+                                        )
+                                        Spacer(Modifier.height(4.dp))
+                                        Text(
+                                            feature.description,
+                                            style = MaterialTheme.typography.body2,
+                                            color = textColor.copy(alpha = 0.8f),
+                                            fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default
+                                        )
                                     }
                                 }
-                            )
+                            }
                         }
                     }
                 }
             }
-        ) { innerPadding ->
-            val contentOffset = remember { Animatable(0f) }
-            LaunchedEffect(isIpv7) {
-                if (isIpv7) {
-                    while(true) {
-                        contentOffset.animateTo(15f, animationSpec = tween(10000))
-                        contentOffset.animateTo(-15f, animationSpec = tween(10000))
+
+            // Sliding Custom Sub-Drawer (Slide-Up Bottom Sheet Panel)
+            AnimatedVisibility(
+                visible = selectedFeature != null,
+                enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(300)),
+                exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(300))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(bgColor)
+                        .clickable(enabled = false) {} // block clicks below
+                ) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(navColor)
+                                .statusBarsPadding()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = { selectedFeature = null }) {
+                                Icon(Icons.Default.ArrowBack, contentDescription = "back", tint = textColor)
+                            }
+                            Spacer(Modifier.width(16.dp))
+                            Text(
+                                selectedFeature?.name ?: "",
+                                style = MaterialTheme.typography.h6,
+                                color = textColor,
+                                fontFamily = if (isIpv7) FontFamily.Cursive else FontFamily.Default
+                            )
+                        }
+                        Divider(color = textColor.copy(alpha = 0.2f))
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                                .verticalScroll(rememberScrollState())
+                                .padding(16.dp),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            selectedFeature?.content?.invoke()
+                        }
                     }
-                } else {
-                    contentOffset.animateTo(0f)
-                }
-            }
-            Box(modifier = Modifier.padding(innerPadding).fillMaxSize().offset(y = contentOffset.value.dp).background(color = bgColor)) {
-                NavHost(navController, startDestination = Screen.Dashboard.route) {
-                    composable(Screen.Dashboard.route) { DashboardScreen() }
-                    composable(Screen.Security.route) { SecurityScreen() }
-                    composable(Screen.Predictor.route) { PredictorScreen() }
-                    composable(Screen.Ping.route) { PingScreen() }
-                    composable(Screen.DNS.route) { DnsScreen() }
-                    composable(Screen.IPv7.route) { Ipv7Screen() }
-                    composable(Screen.More.route) { MoreFeaturesScreen() }
-                    
-                    composable(Screen.About.route) { AboutScreen() }
-                    composable(Screen.Settings.route) { SettingsScreen() }
-                    composable(Screen.Admin.route) { AdminScreen() }
-                    composable(Screen.Dev.route) { DevScreen() }
-                    
-                    composable(Screen.DevOps.route) { DevOpsPanel() }
-                    composable(Screen.FinOps.route) { FinOpsPanel() }
-                    composable(Screen.Splunk.route) { SplunkPanel() }
-                    composable(Screen.Grafana.route) { GrafanaPanel() }
-                    composable(Screen.Ansible.route) { AnsiblePanel() }
-                    composable(Screen.B2BSaaS.route) { B2BSaaSPanel() }
-                    composable(Screen.Chaos.route) { ChaosPanel() }
-                    composable(Screen.Pizza.route) { PizzaTrackerPanel() }
-                    composable(Screen.HR.route) { HRPanel() }
-                    composable(Screen.Lawyer.route) { LawyerPanel() }
-                    composable(Screen.Marketing.route) { MarketingPanel() }
-                    composable(Screen.Coffee.route) { CoffeePanel() }
-                    composable(Screen.Weather.route) { WeatherPanel() }
-                    composable(Screen.Stock.route) { StockPanel() }
-                    composable(Screen.Astrology.route) { AstrologyPanel() }
-                    composable(Screen.History.route) { HistoryPanel() }
-                    composable(Screen.Secret.route) { SecretPanel() }
-                    composable(Screen.BugTracker.route) { BugTrackerPanel() }
-                    composable(Screen.Support.route) { SupportPanel() }
-                    composable(Screen.Compliance.route) { CompliancePanel() }
-                    composable(Screen.Doc.route) { DocPanel() }
-                    composable(Screen.Feedback.route) { FeedbackPanel() }
-                    composable(Screen.Sales.route) { SalesPanel() }
-                    composable(Screen.Infra.route) { InfraPanel() }
-                    composable(Screen.Database.route) { DatabasePanel() }
-                    composable(Screen.ApiDocs.route) { ApiDocsPanel() }
-                    composable(Screen.Telemetry.route) { TelemetryPanel() }
-                    composable(Screen.Void.route) { VoidPanel() }
-                    composable(Screen.QuantumCat.route) { QuantumCatPanel() }
-                    composable(Screen.WordSearch.route) { WordSearchPanel() }
                 }
             }
         }
