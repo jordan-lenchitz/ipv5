@@ -701,13 +701,20 @@ fun DashboardScreen() {
             backgroundColor = if(isIpv7) Color.Black else MaterialTheme.colors.surface
         ) {
             Text(
-                ip.toString(),
+                ip.octets.joinToString("."),
                 modifier = Modifier.padding(24.dp),
                 style = MaterialTheme.typography.h5,
                 color = if(isIpv7) Color.Yellow else MaterialTheme.colors.primary,
                 fontFamily = fontFamily
             )
         }
+        Text(
+            "flux: ${ip.fluxCapacitorState.toString().take(5)}v | qei: ${ip.quantumEntanglementIndex}",
+            style = MaterialTheme.typography.caption,
+            fontFamily = fontFamily,
+            color = if(isAccessible) Color.Black else Color.Gray,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
         Button(
             onClick = { 
                 ip = IPv5Address.random()
