@@ -377,9 +377,7 @@ fun App() {
                                 TextButton(onClick = { 
                                     val wasAccessible = GlobalAppState.accessibilityMode.value
                                     GlobalAppState.accessibilityMode.value = !wasAccessible
-                                    if (wasAccessible) {
-                                        GlobalAppState.refreshColors()
-                                    }
+                                    GlobalAppState.refreshColors()
                                     randomizeScreens()
                                 }) {
                                     Text("accessible", color = textColor)

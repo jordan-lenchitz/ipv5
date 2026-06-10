@@ -49,9 +49,15 @@ object GlobalAppState {
     }
 
     fun refreshColors() {
-        val bg = getRandomVibrantColor()
-        currentBgColor.value = bg
-        currentNavColor.value = getRandomVibrantColor()
-        currentTextColor.value = getContrastingColor(bg)
+        if (accessibilityMode.value) {
+            currentBgColor.value = Color.White
+            currentNavColor.value = Color.LightGray
+            currentTextColor.value = Color.Black
+        } else {
+            val bg = getRandomVibrantColor()
+            currentBgColor.value = bg
+            currentNavColor.value = getRandomVibrantColor()
+            currentTextColor.value = getContrastingColor(bg)
+        }
     }
 }
