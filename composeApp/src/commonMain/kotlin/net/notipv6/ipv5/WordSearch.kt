@@ -1,6 +1,9 @@
 package net.notipv6.ipv5
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -31,7 +34,7 @@ enum class Direction(val dx: Int, val dy: Int) {
 
 data class WordLocation(val word: String, val x: Int, val y: Int, val dir: Direction)
 
-class WordSearchEngine(val size: Int = 16) {
+class WordSearchEngine(val size: Int = 15) {
     val grid = Array(size) { CharArray(size) { ' ' } }
     val placedWords = mutableListOf<WordLocation>()
 
@@ -133,14 +136,18 @@ fun WordSearchPanel(onCloseApp: () -> Unit = { exitApp() }) {
             "bridge", "protocol", "octet", "entropy", "logic", "drift", "flux", "buffer",
             "stack", "heap", "node", "link", "port", "dns", "mac", "ping", "trace", "sync",
             "mumps", "miis", "magic", "npr", "global", "pdp11", "pdp15", "vax", "decsystem",
-            "meditech", "barnett", "pappalardo", "marble", "holenet", "maybebit", "vibe"
-        ).distinct()
+            "meditech", "barnett", "pappalardo", "marble", "holenet", "maybebit", "vibe",
+            // --- Custom Added Words ---
+            "jumboframes", "1500mtu", "antigravity", "wireshark", "packetloss", "latency", "overclock", 
+            "anycast", "multicast", "darkfiber", "loopback", "carrierpigeon", "packetshredder", 
+            "macrandomizer", "dnsroulette", "ethernet"
+        ).distinct().filter { it.length <= 21 }
     }
 
     var wordsToFind by remember { mutableStateOf(wordPool.shuffled().take(8)) }
     // IPv5 Jumboframes: Dynamic grid sizing to accommodate excessively long protocol headers
     val gridSize = remember(wordsToFind) {
-        (wordsToFind.maxOfOrNull { it.length } ?: 16).coerceAtLeast(16)
+        (wordsToFind.maxOfOrNull { it.length } ?: 15).coerceAtLeast(15)
     }
     val engine = remember(wordsToFind, gridSize) {
         WordSearchEngine(gridSize).apply { generate(wordsToFind) }
@@ -163,9 +170,9 @@ fun WordSearchPanel(onCloseApp: () -> Unit = { exitApp() }) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().padding(4.dp)
         ) {
-            val statusText = if (gridSize > 16) "mtu: $gridSize (jumbo)" else "mtu: 1500"
+            val statusText = if (gridSize >= 16) "mtu $gridSize jumbo" else "1500 mtu"
             Text(
-                "find ${wordsToFind.size - foundWords.size} more codes | $statusText".lowercase(),
+                "find ${wordsToFind.size - foundWords.size} more codes $statusText".lowercase(),
                 style = MaterialTheme.typography.subtitle2,
                 color = textColor.copy(alpha = 0.7f),
                 fontFamily = font,
@@ -347,15 +354,62 @@ fun WordSearchPanel(onCloseApp: () -> Unit = { exitApp() }) {
             }
             
             if (showVictoryDialog) {
+                val puzzleGuid = remember(wordsToFind, gridSize) {
+                    val sortedWords = wordsToFind.sorted()
+                    val rawString = "$gridSize:${sortedWords.joinToString(",")}"
+                    var hash = 0
+                    for (char in rawString) {
+                        hash = 31 * hash + char.code
+                    }
+                    val hexHash = (hash.toLong() and 0xFFFFFFFFL).toString(16).padStart(8, '0')
+                    "ipv5-$gridSize-$hexHash"
+                }
+
+                val shareableText = remember(puzzleGuid, wordsToFind, gridSize) {
+                    val statusText = if (gridSize >= 16) "jumbo" else "1500 mtu"
+                    "ipv5 word search verification report\n" +
+                    "puzzle guid $puzzleGuid\n" +
+                    "grid size $statusText $gridSize x $gridSize\n" +
+                    "words ${wordsToFind.joinToString(" ")}"
+                }
+
+                val clipboardManager = LocalClipboardManager.current
+                var copied by remember { mutableStateOf(false) }
+
                 AlertDialog(
                     onDismissRequest = { showVictoryDialog = false },
-                    title = { Text("SUCCESS! 👏", color = textColor, fontFamily = font, fontWeight = FontWeight.Bold) },
-                    text = { Text("all protocol codes have been verified and settled.", color = textColor.copy(alpha = 0.8f), fontFamily = font) },
+                    title = { Text("success", color = textColor, fontFamily = font, fontWeight = FontWeight.Bold) },
+                    text = {
+                        Column {
+                            Text("all protocol codes verified and settled", color = textColor.copy(alpha = 0.8f), fontFamily = font)
+                            Spacer(Modifier.height(12.dp))
+                            Text("puzzle guid $puzzleGuid", color = textColor, fontFamily = font, fontWeight = FontWeight.SemiBold)
+                            Text("grid size ${if (gridSize >= 16) "jumbo" else "1500 mtu"} $gridSize x $gridSize", color = textColor.copy(alpha = 0.8f), fontFamily = font)
+                            Spacer(Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    clipboardManager.setText(AnnotatedString(shareableText))
+                                    copied = true
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = if (isAccessible) Color.White else Color(0xFF6200EE)
+                                )
+                            ) {
+                                Text(
+                                    if (copied) "copied" else "copy shareable report",
+                                    color = if (isAccessible) Color.Black else Color.White,
+                                    fontFamily = font,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    },
                     confirmButton = {
                         Button(
                             onClick = {
                                 wordsToFind = wordPool.shuffled().take(8)
                                 foundWords = emptySet()
+                                copied = false
                                 showVictoryDialog = false
                             },
                             colors = ButtonDefaults.buttonColors(
@@ -363,7 +417,7 @@ fun WordSearchPanel(onCloseApp: () -> Unit = { exitApp() }) {
                             )
                         ) {
                             Text(
-                                "new scramble".lowercase(), 
+                                "new scramble", 
                                 color = if (isAccessible) Color.Black else Color.White,
                                 fontFamily = font
                             )
@@ -372,12 +426,12 @@ fun WordSearchPanel(onCloseApp: () -> Unit = { exitApp() }) {
                     dismissButton = {
                         Row {
                             TextButton(onClick = onCloseApp) {
-                                Text("close app".lowercase(), fontFamily = font, color = Color.Red)
+                                Text("close app", fontFamily = font, color = Color.Red)
                             }
                             Spacer(Modifier.width(8.dp))
                             TextButton(onClick = { showVictoryDialog = false }) {
                                 Text(
-                                    "just admire".lowercase(), 
+                                    "just admire", 
                                     fontFamily = font, 
                                     color = if (isAccessible) Color.Black else textColor.copy(alpha = 0.7f)
                                 )
