@@ -134,8 +134,8 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
     }
 
     val isAccessible = GlobalAppState.accessibilityMode.value
-    val bgColor = if (isAccessible) Color.Black else Color.White
-    val textColor = if (isAccessible) Color.White else Color.Black
+    val bgColor = if (isAccessible) Color.White else Color.Black
+    val textColor = if (isAccessible) Color.Black else Color.White
     val foundColor = Color(0xFF4DB6AC) // Teal accent
     val font = FontFamily.Default
 
@@ -211,7 +211,7 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                         backgroundColor = if (isSelected) {
                             foundColor
                         } else {
-                            if (isAccessible) Color(0xFF2E2E2E) else Color(0xFFEEEEEE)
+                            if (isAccessible) Color(0xFFEEEEEE) else Color(0xFF2E2E2E)
                         }
                     ),
                     elevation = ButtonDefaults.elevation(0.dp, 0.dp),
@@ -344,7 +344,7 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (isAccessible) Color(0xFF2E2E2E) else Color(0xFFEEEEEE)
+                            backgroundColor = if (isAccessible) Color(0xFFEEEEEE) else Color(0xFF2E2E2E)
                         ),
                         modifier = Modifier.weight(1f).padding(horizontal = 2.dp).height(38.dp)
                     ) {
@@ -376,7 +376,7 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (isAccessible) Color(0xFF2E2E2E) else Color(0xFFEEEEEE)
+                            backgroundColor = if (isAccessible) Color(0xFFEEEEEE) else Color(0xFF2E2E2E)
                         ),
                         modifier = Modifier.weight(1f).padding(horizontal = 2.dp).height(38.dp)
                     ) {
@@ -466,7 +466,7 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                     gameTrigger++
                 },
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isAccessible) Color(0xFF2E2E2E) else Color(0xFFEEEEEE)
+                    backgroundColor = if (isAccessible) Color(0xFFEEEEEE) else Color(0xFF2E2E2E)
                 ),
                 modifier = Modifier.weight(1f).padding(horizontal = 4.dp).height(36.dp)
             ) {
@@ -520,7 +520,7 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                                 copied = true
                             },
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (isAccessible) Color(0xFF2E2E2E) else Color(0xFFEEEEEE)
+                                backgroundColor = if (isAccessible) Color(0xFFEEEEEE) else Color(0xFF2E2E2E)
                             )
                         ) {
                             Text(
@@ -539,7 +539,7 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                             showVictoryDialog = false
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (isAccessible) Color(0xFF2E2E2E) else Color(0xFFEEEEEE)
+                            backgroundColor = if (isAccessible) Color(0xFFEEEEEE) else Color(0xFF2E2E2E)
                         )
                     ) {
                         Text(
@@ -559,7 +559,7 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                             Text(
                                 "just admire",
                                 fontFamily = font,
-                                color = if (isAccessible) Color.Black else textColor.copy(alpha = 0.7f)
+                                color = textColor.copy(alpha = 0.7f)
                             )
                         }
                     }
