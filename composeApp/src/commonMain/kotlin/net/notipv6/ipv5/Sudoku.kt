@@ -119,6 +119,20 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
     var verificationMessage by remember(difficulty, gameTrigger) { mutableStateOf("") }
     var highlightedMistakes by remember(difficulty, gameTrigger) { mutableStateOf(setOf<Pair<Int, Int>>()) }
 
+    var secretTapSequence by remember { mutableStateOf("") }
+
+    fun handleSecretTap(tap: Char) {
+        val nextSeq = secretTapSequence + tap
+        if (nextSeq == "LRRLL") {
+            secretTapSequence = ""
+            showVictoryDialog = true
+        } else if ("LRRLL".startsWith(nextSeq)) {
+            secretTapSequence = nextSeq
+        } else {
+            secretTapSequence = if ("LRRLL".startsWith(tap.toString())) tap.toString() else ""
+        }
+    }
+
     val isAccessible = GlobalAppState.accessibilityMode.value
     val bgColor = if (isAccessible) Color.Black else Color.White
     val textColor = if (isAccessible) Color.White else Color.Black
@@ -149,7 +163,39 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text("sudoku", style = MaterialTheme.typography.h4, fontFamily = font, color = textColor)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text("s", style = MaterialTheme.typography.h4, fontFamily = font, color = textColor)
+            Text(
+                "u",
+                style = MaterialTheme.typography.h4,
+                fontFamily = font,
+                color = textColor,
+                modifier = Modifier.clickable(
+                    interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                    indication = null
+                ) {
+                    handleSecretTap('L')
+                }
+            )
+            Text("d", style = MaterialTheme.typography.h4, fontFamily = font, color = textColor)
+            Text("o", style = MaterialTheme.typography.h4, fontFamily = font, color = textColor)
+            Text("k", style = MaterialTheme.typography.h4, fontFamily = font, color = textColor)
+            Text(
+                "u",
+                style = MaterialTheme.typography.h4,
+                fontFamily = font,
+                color = textColor,
+                modifier = Modifier.clickable(
+                    interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                    indication = null
+                ) {
+                    handleSecretTap('R')
+                }
+            )
+        }
         Spacer(Modifier.height(16.dp))
 
         // Difficulty Selector Tabs
