@@ -247,6 +247,11 @@ sealed class Screen {
         override val label = "word search"
         override val icon: @Composable () -> Unit = { Icon(Icons.Default.Search, null) }
     }
+    object Sudoku : Screen() {
+        override val route = "sudoku"
+        override val label = "sudoku"
+        override val icon: @Composable () -> Unit = { Icon(Icons.Default.Check, null) }
+    }
 }
 
 
@@ -315,7 +320,7 @@ fun App() {
     val drawerScreens = remember {
         mutableStateOf(
             listOf(
-                Screen.WordSearch, Screen.About, Screen.Dev,
+                Screen.WordSearch, Screen.Sudoku, Screen.About, Screen.Dev,
                 Screen.Settings, Screen.Admin, Screen.DevOps, Screen.FinOps, Screen.Splunk,
                 Screen.Grafana, Screen.Ansible, Screen.B2BSaaS, Screen.Chaos, Screen.Pizza,
                 Screen.HR, Screen.Lawyer, Screen.Marketing, Screen.Coffee,
@@ -329,7 +334,7 @@ fun App() {
     }
 
     fun randomizeScreens() {
-        val top3 = listOf(Screen.WordSearch, Screen.About, Screen.Dev)
+        val topList = listOf(Screen.WordSearch, Screen.Sudoku, Screen.About, Screen.Dev)
         val bottom2 = listOf(Screen.Void, Screen.QuantumCat)
         val others = listOf(
             Screen.Settings, Screen.Admin, Screen.DevOps, Screen.FinOps, Screen.Splunk,
@@ -340,7 +345,7 @@ fun App() {
             Screen.Doc, Screen.Feedback, Screen.Sales, Screen.Infra,
             Screen.Database, Screen.ApiDocs, Screen.Telemetry
         ).shuffled()
-        drawerScreens.value = top3 + others + bottom2
+        drawerScreens.value = topList + others + bottom2
     }
     
     LaunchedEffect(Unit) {
@@ -517,6 +522,7 @@ fun App() {
                         composable(Screen.Void.route) { VoidPanel() }
                         composable(Screen.QuantumCat.route) { QuantumCatPanel() }
                         composable(Screen.WordSearch.route) { WordSearchPanel() }
+                        composable(Screen.Sudoku.route) { SudokuPanel() }
                     }
                 }
             }
