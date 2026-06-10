@@ -613,7 +613,7 @@ fun App() {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             IconButton(onClick = { selectedFeature = null }) {
-                                Icon(Icons.Default.ArrowBack, contentDescription = "back", tint = textColor)
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "back", tint = textColor)
                             }
                             Spacer(Modifier.width(16.dp))
                             Text(
