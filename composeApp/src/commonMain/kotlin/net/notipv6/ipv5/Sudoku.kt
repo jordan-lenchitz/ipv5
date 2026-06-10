@@ -106,10 +106,12 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
     
     // Board state trigger
     var gameTrigger by remember { mutableStateOf(0) }
+    var gridUpdateTrigger by remember { mutableStateOf(0) }
     
     // Initialize board on first load or difficulty change
     LaunchedEffect(difficulty, gameTrigger) {
         engine.generate(difficulty)
+        gridUpdateTrigger++
     }
 
     var selectedCell by remember(difficulty, gameTrigger) { mutableStateOf<Pair<Int, Int>?>(null) }
@@ -190,6 +192,8 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                 .border(2.dp, textColor.copy(alpha = 0.8f))
                 .background(bgColor)
         ) {
+            // Read gridUpdateTrigger to force recomposition when board changes
+            val trigger = gridUpdateTrigger
             for (r in 0..8) {
                 // Thick horizontal borders for 3x3 blocks
                 if (r > 0 && r % 3 == 0) {
@@ -289,6 +293,7 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                                     highlightedMistakes = highlightedMistakes - setOf(sr to sc)
                                     verificationMessage = ""
                                     checkWinCondition()
+                                    gridUpdateTrigger++
                                 }
                             }
                         },
@@ -320,6 +325,7 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                                     highlightedMistakes = highlightedMistakes - setOf(sr to sc)
                                     verificationMessage = ""
                                     checkWinCondition()
+                                    gridUpdateTrigger++
                                 }
                             }
                         },
@@ -345,6 +351,7 @@ fun SudokuPanel(onCloseApp: () -> Unit = { exitApp() }) {
                                     engine.user[sr][sc] = 0
                                     highlightedMistakes = highlightedMistakes - setOf(sr to sc)
                                     verificationMessage = ""
+                                    gridUpdateTrigger++
                             }
                         }
                     },
