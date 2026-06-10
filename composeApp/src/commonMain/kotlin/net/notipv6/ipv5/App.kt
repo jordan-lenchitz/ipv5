@@ -664,6 +664,8 @@ fun DashboardScreen() {
     var selectedSign by remember { mutableStateOf("aries") }
     var astrologicalIp by remember { mutableStateOf("") }
     var quantumState by remember { mutableStateOf("superposition") }
+    var isVerifying by remember { mutableStateOf(false) }
+    val verificationLogs = remember { mutableStateListOf<String>() }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
@@ -726,6 +728,74 @@ fun DashboardScreen() {
         }
         Spacer(Modifier.height(16.dp))
         Text("ipv5 protocol status: ${if (isIpv7) "mind blown" else "hyper-active"}", color = if(isIpv7) Color.Blue else Color(0xFF4CAF50), fontSize = if(isIpv7) 24.sp else 16.sp, fontFamily = titleFont)
+        
+        Spacer(Modifier.height(16.dp))
+        Button(
+            onClick = {
+                scope.launch {
+                    isVerifying = true
+                    verificationLogs.clear()
+                    
+                    verificationLogs.add("counting octets...")
+                    delay(600)
+                    
+                    val isQuantumException = Random.nextInt(100) < 15
+                    
+                    verificationLogs.add("found one octet...")
+                    delay(600)
+                    
+                    verificationLogs.add("found two octets...")
+                    delay(600)
+                    
+                    verificationLogs.add("found three octets...")
+                    delay(600)
+                    
+                    verificationLogs.add("found four octets...")
+                    delay(600)
+                    
+                    if (isQuantumException) {
+                        verificationLogs.add("error: under close observation, octet 5 behaved as a wave and temporarily disappeared. please do not look directly at the screen.")
+                    } else {
+                        verificationLogs.add("found five octets...")
+                        delay(600)
+                        
+                        verificationLogs.add("yes six...")
+                        delay(600)
+                        
+                        verificationLogs.add("seven...")
+                        delay(600)
+                        
+                        verificationLogs.add("verdict: mathematically superior to ipv4 by exactly 25%.")
+                    }
+                    isVerifying = false
+                }
+            },
+            enabled = !isVerifying,
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF009688))
+        ) {
+            Text(if (isVerifying) "verifying..." else "verify octet count", fontFamily = fontFamily, color = Color.White)
+        }
+        
+        if (verificationLogs.isNotEmpty()) {
+            Spacer(Modifier.height(8.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = if (isAccessible) Color.Transparent else Color(0x1A009688))
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                verificationLogs.forEach { log ->
+                    Text(
+                        log,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 12.sp,
+                        color = if (log.startsWith("error")) Color.Red else if (isAccessible) Color.Black else Color(0xFF00796B),
+                        modifier = Modifier.padding(vertical = 2.dp)
+                    )
+                }
+            }
+        }
         
         Spacer(Modifier.height(32.dp))
         Divider()
