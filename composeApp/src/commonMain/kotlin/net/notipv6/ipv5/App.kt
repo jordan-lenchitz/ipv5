@@ -260,6 +260,57 @@ fun App() {
 
     var isRightDrawerOpen by remember { mutableStateOf(false) }
     var selectedFeature by remember { mutableStateOf<InteractiveFeature?>(null) }
+    var shuffledEsotericFeatures by remember { mutableStateOf(MoreFeaturesInteractive.list.shuffled()) }
+
+    fun shuffleEsotericFeatures(keepFeature: InteractiveFeature? = null) {
+        val currentList = shuffledEsotericFeatures
+        if (keepFeature == null) {
+            shuffledEsotericFeatures = MoreFeaturesInteractive.list.shuffled()
+        } else {
+            val keepIndex = currentList.indexOf(keepFeature)
+            if (keepIndex == -1) {
+                shuffledEsotericFeatures = MoreFeaturesInteractive.list.shuffled()
+            } else {
+                val otherFeatures = MoreFeaturesInteractive.list.filter { it != keepFeature }.shuffled().toMutableList()
+                val newList = mutableListOf<InteractiveFeature>()
+                for (i in 0 until 36) {
+                    if (i == keepIndex) {
+                        newList.add(keepFeature)
+                    } else {
+                        newList.add(otherFeatures.removeAt(0))
+                    }
+                }
+                shuffledEsotericFeatures = newList
+            }
+        }
+    }
+
+    var firstDrawerOpenTrigger by remember { mutableStateOf(true) }
+
+    LaunchedEffect(isRightDrawerOpen) {
+        if (firstDrawerOpenTrigger) {
+            firstDrawerOpenTrigger = false
+            shuffleEsotericFeatures(null)
+        } else {
+            GlobalAppState.refreshColors()
+            shuffleEsotericFeatures(null)
+        }
+    }
+
+    var prevSelectedFeature by remember { mutableStateOf<InteractiveFeature?>(null) }
+
+    LaunchedEffect(selectedFeature) {
+        if (selectedFeature != prevSelectedFeature) {
+            GlobalAppState.refreshColors()
+            if (selectedFeature != null) {
+                shuffleEsotericFeatures(selectedFeature)
+            } else {
+                shuffleEsotericFeatures(prevSelectedFeature)
+            }
+            prevSelectedFeature = selectedFeature
+        }
+    }
+
 
     val drawerScreens = remember {
         mutableStateOf(
@@ -509,7 +560,7 @@ fun App() {
                         }
                         Divider(color = textColor.copy(alpha = 0.2f))
                         LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                            items(MoreFeaturesInteractive.list) { feature ->
+                            items(shuffledEsotericFeatures) { feature ->
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
