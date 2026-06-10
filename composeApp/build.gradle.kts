@@ -66,8 +66,8 @@ android {
         applicationId = "net.notipv6.ipv5"
         minSdk = 24
         targetSdk = 35
-        versionCode = 5
-        versionName = "1.0.1.0"
+        versionCode = 6
+        versionName = "1.1.0"
     }
     signingConfigs {
         create("release") {
