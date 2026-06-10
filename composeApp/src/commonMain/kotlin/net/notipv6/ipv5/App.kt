@@ -380,13 +380,16 @@ fun App() {
                             },
                             actions = {
                                 TextButton(onClick = { 
-                                    val wasAccessible = GlobalAppState.accessibilityMode.value
-                                    GlobalAppState.accessibilityMode.value = !wasAccessible
-                                    GlobalAppState.refreshColors()
-                                    randomizeScreens()
-                                }) {
-                                    Text("accessible", color = textColor)
-                                }
+                                     val wasAccessible = GlobalAppState.accessibilityMode.value
+                                     GlobalAppState.accessibilityMode.value = !wasAccessible
+                                     GlobalAppState.refreshColors()
+                                     randomizeScreens()
+                                 }) {
+                                     Text(
+                                         if (GlobalAppState.accessibilityMode.value) "accessibility mode on" else "accessibility mode off",
+                                         color = textColor
+                                     )
+                                 }
                             },
                             backgroundColor = Color.Transparent,
                             elevation = 0.dp,
@@ -673,25 +676,25 @@ fun DashboardScreen() {
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("IPv5 Dashboard", style = MaterialTheme.typography.h3, fontFamily = titleFont, color = if(isAccessible) Color.Black else if(isIpv7) Color.Cyan else Color.Unspecified)
+        Text("ipv5 dashboard", style = MaterialTheme.typography.h3, fontFamily = titleFont, color = if(isAccessible) Color.Black else if(isIpv7) Color.Cyan else Color.Unspecified)
         Spacer(Modifier.height(16.dp))
         
-        Text("Quantum Packet State: $quantumState", color = if(isAccessible) Color.Black else Color.Magenta, fontWeight = FontWeight.Bold, fontFamily = fontFamily)
-        Text("Local Cloud Density: ${Random.nextInt(0, 100)}% (Routing impact: HIGH)", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
+        Text("quantum packet state: $quantumState", color = if(isAccessible) Color.Black else Color.Magenta, fontWeight = FontWeight.Bold, fontFamily = fontFamily)
+        Text("local cloud density: ${Random.nextInt(0, 100)}% (routing impact: high)", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
         
         Spacer(Modifier.height(16.dp))
-        Text("Legacy Protocols:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
-        Text("IPv3 (Deprecated): 192.168.1.???", color = Color.Gray, fontFamily = fontFamily, fontWeight = FontWeight.Bold)
-        Text("IPv4 (Boring): $realIpv4", color = if(isAccessible) Color.Black else if(isIpv7) Color.Green else Color.Gray, fontFamily = fontFamily)
-        Text("IPv6 (Try-hard): $realIpv6", color = if(isAccessible) Color.Black else if(isIpv7) Color.Red else Color.Gray, fontFamily = fontFamily)
+        Text("legacy protocols:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
+        Text("ipv3 (deprecated): 192.168.1.???", color = Color.Gray, fontFamily = fontFamily, fontWeight = FontWeight.Bold)
+        Text("ipv4 (boring): $realIpv4", color = if(isAccessible) Color.Black else if(isIpv7) Color.Green else Color.Gray, fontFamily = fontFamily)
+        Text("ipv6 (try-hard): $realIpv6", color = if(isAccessible) Color.Black else if(isIpv7) Color.Red else Color.Gray, fontFamily = fontFamily)
 
         if (isIpv7) {
             Spacer(Modifier.height(8.dp))
-            Text("IPv7 (PREMIUM): $ipv7Address", color = if(isAccessible) Color.Black else Color.Yellow, fontFamily = fontFamily, fontWeight = FontWeight.ExtraBold)
+            Text("ipv7 (premium): $ipv7Address", color = if(isAccessible) Color.Black else Color.Yellow, fontFamily = fontFamily, fontWeight = FontWeight.ExtraBold)
         }
 
         Spacer(Modifier.height(32.dp))
-        Text("Current Dynamic IPv5:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
+        Text("current dynamic ipv5:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
         Card(
             elevation = if(isIpv7) 24.dp else 4.dp, 
             modifier = Modifier.padding(16.dp), 
@@ -712,14 +715,14 @@ fun DashboardScreen() {
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Red else Color(0xFF6200EE))
         ) {
-            Text("Re-polarize Quantum Field", fontFamily = fontFamily, color = Color.White)
+            Text("re-polarize quantum field", fontFamily = fontFamily, color = Color.White)
         }
         Spacer(Modifier.height(16.dp))
-        Text("IPv5 Protocol Status: ${if (isIpv7) "MIND BLOWN" else "HYPER-ACTIVE"}", color = if(isIpv7) Color.Blue else Color(0xFF4CAF50), fontSize = if(isIpv7) 24.sp else 16.sp, fontFamily = titleFont)
+        Text("ipv5 protocol status: ${if (isIpv7) "mind blown" else "hyper-active"}", color = if(isIpv7) Color.Blue else Color(0xFF4CAF50), fontSize = if(isIpv7) 24.sp else 16.sp, fontFamily = titleFont)
         
         Spacer(Modifier.height(32.dp))
         Divider()
-        Text("Astrological IP Allocation", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
+        Text("astrological ip allocation", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
         val signs = listOf("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces")
         var expanded by remember { mutableStateOf(false) }
         Box {
@@ -740,7 +743,7 @@ fun DashboardScreen() {
             }
         }
         if (astrologicalIp.isNotEmpty()) {
-            Text("Your Astral IP: $astrologicalIp", color = Color(0xFF9C27B0), fontWeight = FontWeight.Bold, fontFamily = fontFamily)
+            Text("your astral ip: $astrologicalIp", color = Color(0xFF9C27B0), fontWeight = FontWeight.Bold, fontFamily = fontFamily)
         }
     }
 }
@@ -752,27 +755,27 @@ fun SecurityScreen() {
     var entangled by remember { mutableStateOf("") }
     var culinaryMac by remember { mutableStateOf("") }
     var tinFoilMode by remember { mutableStateOf(false) }
-    var bluetoothStatus by remember { mutableStateOf("Ready") }
+    var bluetoothStatus by remember { mutableStateOf("ready") }
     val isIpv7 = GlobalAppState.ipv7Mode.value
     val isAccessible = GlobalAppState.accessibilityMode.value
     val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
-
+ 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
-        Text("MAC Entanglement", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Text("XOR security for the modern age.", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
+        Text("mac entanglement", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Text("xor security for the modern age.", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
         Spacer(Modifier.height(16.dp))
         
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Tin Foil Hat Protection", modifier = Modifier.weight(1f))
+            Text("tin foil hat protection", modifier = Modifier.weight(1f))
             Switch(checked = tinFoilMode, onCheckedChange = { tinFoilMode = it })
         }
         
         Spacer(Modifier.height(8.dp))
-        TextField(value = mac, onValueChange = { mac = it }, label = { Text("Device MAC Address") })
+        TextField(value = mac, onValueChange = { mac = it }, label = { Text("device mac address") })
         Spacer(Modifier.height(8.dp))
         
         Box(modifier = if(tinFoilMode) Modifier.background(color = Color.LightGray).padding(8.dp) else Modifier) {
-            Text("Base IPv5: ${ipv5}", fontFamily = fontFamily)
+            Text("base ipv5: ${ipv5}", fontFamily = fontFamily)
         }
         
         Spacer(Modifier.height(16.dp))
@@ -787,40 +790,40 @@ fun SecurityScreen() {
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
         ) {
-            Text("Entangle Security", fontFamily = fontFamily, color = Color.White)
+            Text("entangle security", fontFamily = fontFamily, color = Color.White)
         }
         
         if (entangled.isNotEmpty()) {
             Spacer(Modifier.height(16.dp))
-            Text("Entangled IPv5 Address:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
+            Text("entangled ipv5 address:", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
             Text(entangled, color = if(isAccessible) Color.Black else if(isIpv7) Color.White else Color.Magenta, style = MaterialTheme.typography.h5, fontFamily = fontFamily, modifier = Modifier.background(color = if(isAccessible) Color.Transparent else if(isIpv7) Color.Black else Color.Transparent))
         }
         
         Spacer(Modifier.height(32.dp))
         Divider()
-        Text("Experimental Security", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
+        Text("experimental security", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
         
         Button(
             onClick = { culinaryMac = IPv5Utilities.scrambleMacCulinary(mac) },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50))
         ) {
-            Text("Hash MAC with Chicken Noodle Soup", fontFamily = fontFamily, color = Color.White)
+            Text("hash mac with chicken noodle soup", fontFamily = fontFamily, color = Color.White)
         }
         if (culinaryMac.isNotEmpty()) {
-            Text("Culinary Hash: $culinaryMac", color = Color(0xFF4CAF50), fontFamily = fontFamily)
+            Text("culinary hash: $culinaryMac", color = Color(0xFF4CAF50), fontFamily = fontFamily)
         }
         
         Spacer(Modifier.height(16.dp))
         Button(
             onClick = { 
-                bluetoothStatus = "Translating Bluetooth signals to IPv5..."
+                bluetoothStatus = "translating bluetooth signals to ipv5..."
                 // Mock delay logic could go here
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF2196F3))
         ) {
-            Text("Translate Bluetooth to IPv5 Node", fontFamily = fontFamily, color = Color.White)
+            Text("translate bluetooth to ipv5 node", fontFamily = fontFamily, color = Color.White)
         }
-        Text("Bluetooth Status: $bluetoothStatus", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
+        Text("bluetooth status: $bluetoothStatus", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
     }
 }
 
@@ -845,39 +848,39 @@ fun PredictorScreen() {
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
-        Text("Dynamic Port Predictor", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Text("Ports determined by energy levels.", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
+        Text("dynamic port predictor", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Text("ports determined by energy levels.", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
         Spacer(Modifier.height(16.dp))
-        Text("Simulated Battery: ${battery}%", fontFamily = fontFamily)
+        Text("simulated battery: ${battery}%", fontFamily = fontFamily)
         Slider(value = battery.toFloat(), onValueChange = { battery = it.toInt() }, valueRange = 0f..100f)
         Spacer(Modifier.height(16.dp))
         Button(
             onClick = { port = IPv5Utilities.predictPort(battery) },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
         ) {
-            Text("Predict Active Port", fontFamily = fontFamily, color = Color.White)
+            Text("predict active port", fontFamily = fontFamily, color = Color.White)
         }
         if (port != 0) {
-            Text("Suggested Port: $port", style = MaterialTheme.typography.h5, color = if(isAccessible) Color.Black else if(isIpv7) Color.Red else Color(0xFF4CAF50), fontFamily = fontFamily)
+            Text("suggested port: $port", style = MaterialTheme.typography.h5, color = if(isAccessible) Color.Black else if(isIpv7) Color.Red else Color(0xFF4CAF50), fontFamily = fontFamily)
         }
         
         Spacer(Modifier.height(32.dp))
         Divider()
-        Text("Esoteric Port Methods", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
+        Text("esoteric port methods", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
         
         Button(
             onClick = { teaReading = IPv5Utilities.getTeaLeafReading() },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF795548))
         ) {
-            Text("Divinate Port via Tea Leaves", fontFamily = fontFamily, color = Color.White)
+            Text("divinate port via tea leaves", fontFamily = fontFamily, color = Color.White)
         }
         if (teaReading.isNotEmpty()) {
-            Text("The Leaves say: $teaReading", color = Color(0xFF795548), fontFamily = fontFamily)
-            Text("Recommended Port: ${Random.nextInt(1, 1024)}", fontWeight = FontWeight.Bold, fontFamily = fontFamily)
+            Text("the leaves say: $teaReading", color = Color(0xFF795548), fontFamily = fontFamily)
+            Text("recommended port: ${Random.nextInt(1, 1024)}", fontWeight = FontWeight.Bold, fontFamily = fontFamily)
         }
         
         Spacer(Modifier.height(16.dp))
-        Text("Quantum Tunneling Port: ${if (tunnelingPort == 0) "---" else tunnelingPort}", style = MaterialTheme.typography.h5, fontFamily = fontFamily)
+        Text("quantum tunneling port: ${if (tunnelingPort == 0) "---" else tunnelingPort}", style = MaterialTheme.typography.h5, fontFamily = fontFamily)
         Button(
             onClick = { 
                 if (isTunneling) {
@@ -888,7 +891,7 @@ fun PredictorScreen() {
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF9C27B0))
         ) {
-            Text(if (isTunneling) "Collapse Wavefunction" else "Begin Quantum Tunneling", fontFamily = fontFamily, color = Color.White)
+            Text(if (isTunneling) "collapse wavefunction" else "begin quantum tunneling", fontFamily = fontFamily, color = Color.White)
         }
     }
 }
@@ -906,42 +909,42 @@ fun PingScreen() {
     val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Boomerang Ping", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
-        Text("Routes localhost through the moon for accuracy.", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
+        Text("boomerang ping", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Text("routes localhost through the moon for accuracy.", style = MaterialTheme.typography.caption, fontFamily = fontFamily)
         
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Paranormal Mode", modifier = Modifier.weight(1f))
+            Text("paranormal mode", modifier = Modifier.weight(1f))
             Checkbox(checked = paranormalMode, onCheckedChange = { paranormalMode = it })
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Carrier Pigeon Mode", modifier = Modifier.weight(1f))
+            Text("carrier pigeon mode", modifier = Modifier.weight(1f))
             Checkbox(checked = pigeonMode, onCheckedChange = { pigeonMode = it })
         }
         
-        TextField(value = host, onValueChange = { host = it }, label = { Text("Target Host") }, modifier = Modifier.fillMaxWidth())
+        TextField(value = host, onValueChange = { host = it }, label = { Text("target host") }, modifier = Modifier.fillMaxWidth())
         Button(
             onClick = {
                 scope.launch {
                     pinging = true
                     results.clear()
                     realLatencies.clear()
-                    val modePrefix = if(paranormalMode) "[GHOST] " else if(pigeonMode) "[BIRD] " else ""
-                    results.add(0, "${modePrefix}Pinging $host via Boomerang Route...")
+                    val modePrefix = if(paranormalMode) "[ghost] " else if(pigeonMode) "[bird] " else ""
+                    results.add(0, "${modePrefix}pinging $host via boomerang route...")
                     repeat(4) {
                         val realLatency = pingHost(host)
                         delay(if(isIpv7) 100 else 1000)
                         
                         if (paranormalMode) {
-                            results.add(0, "Reply from The Beyond: latency=${IPv5Utilities.getParanormalLatency()}")
+                            results.add(0, "reply from the beyond: latency=${IPv5Utilities.getParanormalLatency()}")
                             realLatencies.add(0, realLatency)
                         } else if (pigeonMode) {
-                            results.add(0, "Pigeon at ${Random.nextInt(10, 50)}km/h. Wind resistance: HIGH. Reply in ${Random.nextInt(5, 30)}s")
+                            results.add(0, "pigeon at ${Random.nextInt(10, 50)}km/h. wind resistance: high. reply in ${Random.nextInt(5, 30)}s")
                             realLatencies.add(0, realLatency)
                         } else if (realLatency != null) {
-                            results.add(0, "Reply from $host: bytes=40 time=${realLatency * 10000}ms TTL=1")
+                            results.add(0, "reply from $host: bytes=40 time=${realLatency * 10000}ms ttl=1")
                             realLatencies.add(0, realLatency)
                         } else {
-                            results.add(0, "Request timed out: The Moon is currently blocked by a cloud.")
+                            results.add(0, "request timed out: the moon is currently blocked by a cloud.")
                             realLatencies.add(0, null)
                         }
                     }
@@ -951,7 +954,7 @@ fun PingScreen() {
             enabled = !pinging,
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFE91E63))
         ) {
-            Text(if (pinging) "Pinging..." else "Start Boomerang Ping", fontFamily = fontFamily, color = Color.White)
+            Text(if (pinging) "pinging..." else "start boomerang ping", fontFamily = fontFamily, color = Color.White)
         }
         
         Spacer(Modifier.height(16.dp))
@@ -962,7 +965,7 @@ fun PingScreen() {
                     val real = realLatencies.getOrNull(index)
                     if (real != null) {
                         Text(
-                            "Actual latency: ${real}ms (Highlight to reveal secrets)", 
+                            "actual latency: ${real}ms (highlight to reveal secrets)", 
                             color = Color.Transparent, 
                             fontSize = 8.sp,
                             fontFamily = fontFamily
@@ -973,7 +976,7 @@ fun PingScreen() {
         }
     }
 }
-
+ 
 @Composable
 fun DnsScreen() {
     var url by remember { mutableStateOf("google.com") }
@@ -985,20 +988,20 @@ fun DnsScreen() {
     val isIpv7 = GlobalAppState.ipv7Mode.value
     val isAccessible = GlobalAppState.accessibilityMode.value
     val fontFamily = if (isIpv7) FontFamily.Monospace else FontFamily.Default
-
+ 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Slow-DNS Resolver", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
+        Text("slow-dns resolver", style = MaterialTheme.typography.h4, fontFamily = if(isIpv7) FontFamily.Cursive else FontFamily.Default)
         
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Emoji Translation", modifier = Modifier.weight(1f))
+            Text("emoji translation", modifier = Modifier.weight(1f))
             Switch(checked = emojiDnsMode, onCheckedChange = { emojiDnsMode = it })
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Ancestral (Geocities) Mode", modifier = Modifier.weight(1f))
+            Text("ancestral (geocities) mode", modifier = Modifier.weight(1f))
             Switch(checked = ancestralMode, onCheckedChange = { ancestralMode = it })
         }
         
-        TextField(value = url, onValueChange = { url = it }, label = { Text("URL to resolve") }, modifier = Modifier.fillMaxWidth())
+        TextField(value = url, onValueChange = { url = it }, label = { Text("url to resolve") }, modifier = Modifier.fillMaxWidth())
         Button(
             onClick = {
                 scope.launch {
@@ -1006,9 +1009,9 @@ fun DnsScreen() {
                     logs.clear()
                     val realIp = resolveDns(url)
                     val steps = if(ancestralMode) {
-                        listOf("Connecting to 56k Modem...", "Bypassing Under Construction signs...", "Searching the Yahoo! Directory...", "Ancestral site located!")
+                        listOf("connecting to 56k modem...", "bypassing under construction signs...", "searching the yahoo! directory...", "ancestral site located!")
                     } else {
-                        listOf("Contacting root servers...", "Reticulating splines...", "Consulting the Oracle...", "Waiting for carrier pigeon...", "IPv5 found!")
+                        listOf("contacting root servers...", "reticulating splines...", "consulting the oracle...", "waiting for carrier pigeon...", "ipv5 found!")
                     }
                     
                     for (step in steps) {
@@ -1017,16 +1020,16 @@ fun DnsScreen() {
                     }
                     
                     if (emojiDnsMode) {
-                        logs.add("Resolution Result: ${IPv5Utilities.getEmojiDns(url)}")
+                        logs.add("resolution result: ${IPv5Utilities.getEmojiDns(url)}")
                     } else if (ancestralMode) {
-                        logs.add("Ancestral URL: www.geocities.com/SiliconValley/Hacker/${url.split(".")[0]}/index.html")
+                        logs.add("ancestral url: www.geocities.com/siliconvalley/hacker/${url.split(".")[0]}/index.html")
                     } else if (realIp != null) {
                         val antiIp = realIp.split(".").reversed().joinToString(".")
                         val hexMac = realIp.split(".").map { it.toIntOrNull()?.toString(16)?.uppercase()?.padStart(2, '0') ?: "00" }.joinToString(":")
-                        logs.add("Resolved Anti-IP: $antiIp")
-                        logs.add("Discovered MAC Address: $hexMac")
+                        logs.add("resolved anti-ip: $antiIp")
+                        logs.add("discovered mac address: $hexMac")
                     } else {
-                        logs.add("Resolution failed: Carrier pigeon lost at sea.")
+                        logs.add("resolution failed: carrier pigeon lost at sea.")
                     }
                     resolving = false
                 }
@@ -1034,7 +1037,7 @@ fun DnsScreen() {
             enabled = !resolving,
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFF9800))
         ) {
-            Text(if (resolving) "Resolving..." else "Resolve URL", fontFamily = fontFamily, color = Color.White)
+            Text(if (resolving) "resolving..." else "resolve url", fontFamily = fontFamily, color = Color.White)
         }
         
         Spacer(Modifier.height(16.dp))
@@ -1052,8 +1055,8 @@ fun Ipv7Screen() {
     
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("IPv7 Premium", style = MaterialTheme.typography.h2, fontFamily = if(isIpv7) FontFamily.Monospace else FontFamily.Default, color = if(isIpv7) Color.White else Color.Unspecified)
-            Text("9-octet Base64 Addresses", style = MaterialTheme.typography.h5, color = if(isIpv7) Color.Yellow else Color.Unspecified)
+            Text("ipv7 premium", style = MaterialTheme.typography.h2, fontFamily = if(isIpv7) FontFamily.Monospace else FontFamily.Default, color = if(isIpv7) Color.White else Color.Unspecified)
+            Text("9-octet base64 addresses", style = MaterialTheme.typography.h5, color = if(isIpv7) Color.Yellow else Color.Unspecified)
             Spacer(Modifier.height(24.dp))
             Button(
                 onClick = {
@@ -1062,7 +1065,7 @@ fun Ipv7Screen() {
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = if(isIpv7) Color.Green else Color(0xFF6200EE))
             ) {
-                Text(if(isIpv7) "DEACTIVATE CHAOS" else "UNLEASH IPv7 CHAOS", color = Color.White)
+                Text(if(isIpv7) "deactivate chaos" else "unleash ipv7 chaos", color = Color.White)
             }
         }
     }
