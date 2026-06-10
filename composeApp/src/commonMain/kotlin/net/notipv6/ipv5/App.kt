@@ -659,11 +659,11 @@ fun DashboardScreen() {
     
     var ip by remember { mutableStateOf(IPv5Address.random()) }
     var ipv7Address by remember { mutableStateOf(IPv5Address.randomIPv7()) }
-    var realIpv4 by remember { mutableStateOf("Fetching...") }
-    var realIpv6 by remember { mutableStateOf("Fetching...") }
-    var selectedSign by remember { mutableStateOf("Aries") }
+    var realIpv4 by remember { mutableStateOf("fetching...") }
+    var realIpv6 by remember { mutableStateOf("fetching...") }
+    var selectedSign by remember { mutableStateOf("aries") }
     var astrologicalIp by remember { mutableStateOf("") }
-    var quantumState by remember { mutableStateOf("Superposition") }
+    var quantumState by remember { mutableStateOf("superposition") }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
@@ -671,7 +671,7 @@ fun DashboardScreen() {
         realIpv6 = fetchIp(true)
         while(true) {
             delay(2000)
-            quantumState = listOf("Alive", "Dead", "Both", "Missing").random()
+            quantumState = listOf("alive", "dead", "both", "missing").random()
         }
     }
 
@@ -723,7 +723,7 @@ fun DashboardScreen() {
         Spacer(Modifier.height(32.dp))
         Divider()
         Text("astrological ip allocation", style = MaterialTheme.typography.h6, fontFamily = fontFamily)
-        val signs = listOf("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces")
+        val signs = listOf("aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces")
         var expanded by remember { mutableStateOf(false) }
         Box {
             Button(

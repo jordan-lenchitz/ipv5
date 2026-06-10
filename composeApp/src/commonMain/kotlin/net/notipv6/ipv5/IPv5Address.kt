@@ -10,7 +10,7 @@ data class IPv5Address(
     val quantumEntanglementIndex: Int = 0
 ) {
     override fun toString(): String {
-        return octets.joinToString(".") + " [Flux: ${fluxCapacitorState.toString().take(5)}V, QEI: $quantumEntanglementIndex]"
+        return octets.joinToString(".") + " [flux: ${fluxCapacitorState.toString().take(5)}v, qei: $quantumEntanglementIndex]"
     }
 
     override fun equals(other: Any?): Boolean {

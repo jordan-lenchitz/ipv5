@@ -6,7 +6,7 @@ object IPv5Utilities {
 
     fun entangleMac(ipv5: IPv5Address, mac: String): String {
         val macBytes = mac.split(":").mapNotNull { it.toIntOrNull(16) }
-        if (macBytes.isEmpty()) return "INVALID MAC"
+        if (macBytes.isEmpty()) return "invalid mac"
         
         val entangledOctets = ipv5.octets.toMutableList()
         entangledOctets[0] = entangledOctets[0] xor (macBytes.getOrElse(0) { 0 })
@@ -55,24 +55,24 @@ object IPv5Utilities {
     }
 
     fun scrambleMacCulinary(mac: String): String {
-        val ingredients = listOf("Salt", "Pepper", "Onion", "Garlic", "Chicken", "Noodle", "Broth")
+        val ingredients = listOf("salt", "pepper", "onion", "garlic", "chicken", "noodle", "broth")
         val random = Random(mac.hashCode().toLong())
         val recipe = (1..3).map { ingredients[random.nextInt(ingredients.size)] }.joinToString("-")
-        return "MAC-SOUP-" + recipe.uppercase()
+        return "mac-soup-" + recipe.lowercase()
     }
 
     fun getParanormalLatency(): String {
-        val ghosts = listOf("Casper", "Slimer", "Beetlejuice", "Bloody Mary")
+        val ghosts = listOf("casper", "slimer", "beetlejuice", "bloody mary")
         val latency = Random.nextLong(666, 6666)
-        return "${latency}ms (Ghost detected: ${ghosts.random()})"
+        return "${latency}ms (ghost detected: ${ghosts.random()})"
     }
 
     fun getTeaLeafReading(): String {
         val fortunes = listOf(
-            "A packet will find its home soon.",
-            "Beware of the router with three antennas.",
-            "A DNS resolution brings unexpected joy.",
-            "You will encounter a stable IP in the near future."
+            "a packet will find its home soon.",
+            "beware of the router with three antennas.",
+            "a dns resolution brings unexpected joy.",
+            "you will encounter a stable ip in the near future."
         )
         return fortunes.random()
     }
