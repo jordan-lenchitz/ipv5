@@ -26,11 +26,73 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-data class InteractiveFeature(
-    val name: String,
-    val description: String,
+fun sanitizeEsotericText(input: String): String {
+    val lowercaseInput = input.lowercase()
+    val sb = StringBuilder()
+    for (i in lowercaseInput.indices) {
+        val c = lowercaseInput[i]
+        if (c == '.') {
+            val prevIsDigit = i > 0 && lowercaseInput[i - 1].isDigit()
+            val nextIsDigit = i < lowercaseInput.length - 1 && lowercaseInput[i + 1].isDigit()
+            if (prevIsDigit && nextIsDigit) {
+                sb.append(c)
+            }
+        } else if (c in setOf(',', '!', '?', ':', ';', '-', '"', '\'', '/', '(', ')', '[', ']', '*', '+', '_', '%', '<', '>', '=', '&', '#', '@', '\\', '{', '}', '~', '|', '^', '`', '$')) {
+            sb.append(' ')
+        } else {
+            sb.append(c)
+        }
+    }
+    return sb.toString().replace(Regex("\\s+"), " ").trim()
+}
+
+@Composable
+private fun Text(
+    text: String,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+    fontSize: androidx.compose.ui.unit.TextUnit = androidx.compose.ui.unit.TextUnit.Unspecified,
+    fontStyle: androidx.compose.ui.text.font.FontStyle? = null,
+    fontWeight: FontWeight? = null,
+    fontFamily: FontFamily? = null,
+    letterSpacing: androidx.compose.ui.unit.TextUnit = androidx.compose.ui.unit.TextUnit.Unspecified,
+    textDecoration: androidx.compose.ui.text.style.TextDecoration? = null,
+    textAlign: TextAlign? = null,
+    lineHeight: androidx.compose.ui.unit.TextUnit = androidx.compose.ui.unit.TextUnit.Unspecified,
+    overflow: androidx.compose.ui.text.style.TextOverflow = androidx.compose.ui.text.style.TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    onTextLayout: (androidx.compose.ui.text.TextLayoutResult) -> Unit = {},
+    style: androidx.compose.ui.text.TextStyle = LocalTextStyle.current
+) {
+    androidx.compose.material.Text(
+        text = sanitizeEsotericText(text),
+        modifier = modifier,
+        color = color,
+        fontSize = fontSize,
+        fontStyle = fontStyle,
+        fontWeight = fontWeight,
+        fontFamily = fontFamily,
+        letterSpacing = letterSpacing,
+        textDecoration = textDecoration,
+        textAlign = textAlign,
+        lineHeight = lineHeight,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        onTextLayout = onTextLayout,
+        style = style
+    )
+}
+
+class InteractiveFeature(
+    name: String,
+    description: String,
     val content: @Composable () -> Unit
-)
+) {
+    val name: String = sanitizeEsotericText(name)
+    val description: String = sanitizeEsotericText(description)
+}
 
 object MoreFeaturesInteractive {
     val list = listOf(
