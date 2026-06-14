@@ -1,6 +1,7 @@
 ipv5 collects no personal information
 
-we query your device for emitted ip address
+we query your device for
+emitted ip address
 
 we never store it nor share it 
 
