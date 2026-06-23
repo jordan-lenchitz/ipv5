@@ -28,22 +28,31 @@ import kotlin.random.Random
 
 fun sanitizeEsotericText(input: String): String {
     val lowercaseInput = input.lowercase()
-    val sb = StringBuilder()
-    for (i in lowercaseInput.indices) {
-        val c = lowercaseInput[i]
-        if (c == '.') {
-            val prevIsDigit = i > 0 && lowercaseInput[i - 1].isDigit()
-            val nextIsDigit = i < lowercaseInput.length - 1 && lowercaseInput[i + 1].isDigit()
-            if (prevIsDigit && nextIsDigit) {
-                sb.append(c)
+    val punctuation = setOf(
+        ',', '!', '?', ':', ';', '-', '"', '\'', '/', '(', ')', '[', ']', 
+        '*', '+', '_', '%', '<', '>', '=', '&', '#', '@', '\\', '{', '}', 
+        '~', '|', '^', '`', '$'
+    )
+    val sanitized = buildString {
+        for (i in lowercaseInput.indices) {
+            val c = lowercaseInput[i]
+            if (c == '.') {
+                // check if flanked by either letters or digits to preserve ip addresses decimals and uris / urls
+                val prevIsWordChar = i > 0 && lowercaseInput[i - 1].isLetterOrDigit()
+                val nextIsWordChar = i < lowercaseInput.length - 1 && lowercaseInput[i + 1].isLetterOrDigit()
+                if (prevIsWordChar && nextIsWordChar) {
+                    append(c)
+                } else {
+                    append(' ') 
+                }
+            } else if (c in punctuation) {
+                append(' ')
+            } else {
+                append(c)
             }
-        } else if (c in setOf(',', '!', '?', ':', ';', '-', '"', '\'', '/', '(', ')', '[', ']', '*', '+', '_', '%', '<', '>', '=', '&', '#', '@', '\\', '{', '}', '~', '|', '^', '`', '$')) {
-            sb.append(' ')
-        } else {
-            sb.append(c)
         }
     }
-    return sb.toString().replace(Regex("\\s+"), " ").trim()
+    return sanitized.replace(Regex("\\s+"), " ").trim()
 }
 
 @Composable
